@@ -1,21 +1,32 @@
 import login from '../api/login.ts';
 import { useFormStatus} from "react-dom";
+import {useUserStore} from "../stores/userStore";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+
+    const { setUser} = useUserStore()
+    const navigate = useNavigate();
+    const { pending } = useFormStatus();
+
     async function handleSubmit(e : React.FormEvent<HTMLFormElement>){
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const data = Object.fromEntries(formData.entries());
         try {
-            const userData = await login(data)
-            console.log("Réponse de l'API:", userData)
+            const user = await login(data)
+            console.log("Réponse de l'API:", user)
+            setUser(user)
+            
+            if (user.authorization === "Admin") {
+                navigate("/admin");
+            } else if (user.authorization === "User") {
+                navigate("/user");
+            }
         } catch (error) {
             console.error("Erreur de la récupération des données: ", error)
         }
-        
     }
-
-    const { pending } = useFormStatus();
 
     return(
        <>
