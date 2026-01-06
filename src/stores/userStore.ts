@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 interface User {
   id: number;
   firstname: string;
-  registration_number: string;
+  registration_number: number;
   authorization: string;
 }
 

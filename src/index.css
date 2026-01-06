@@ -1,6 +1,12 @@
-:root {
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=BIZ+UDMincho&family=Questrial&family=Zen+Maru+Gothic&display=swap');
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@theme {
+  --color-primary: #1F3A5F;
+  --color-secondary: #F4F6F8;
+  --color-text: #263238;
+  
+  --font-family-big-title: 'BIZ UDMincho', serif;
+  --font-family-small-title: 'Questrial', sans-serif;
+  --font-family-text: 'Zen Maru Gothic', sans-serif;
 }
