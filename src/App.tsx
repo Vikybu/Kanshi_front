@@ -1,37 +1,61 @@
-import LoginPage from './pages/LoginPage.tsx'
-import AdminPage from './pages/AdminPage.tsx'
-import UserPage from './pages/UserPage.tsx'
-import './App.css'
-import { BrowserRouter as Router, Route, Routes, Navigate} from "react-router-dom"
-import {useUserStore} from "./stores/userStore.ts";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useUserStore } from "./stores/userStore.ts";
 
-function App() {
-const { user } = useUserStore()
+import LoginPage from "./pages/LoginPage.tsx";
+import AdminPage from "./pages/AdminPage.tsx";
+import UserPage from "./pages/UserPage.tsx";
+import Machine from "./pages/Machine.tsx";
+import CreateMachinePage from "./pages/CreateMachinePage.tsx";
+import MachineList from "./pages/MachineList.tsx";
+
+function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
+  const { user } = useUserStore();
+
+  if (!user) return <Navigate to="/" replace />; 
+  if (role && user.authorization !== role) return <Navigate to="/" replace />; 
+  return children;
+}
+
+export default function App() {
+  const { user } = useUserStore();
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
 
-        {user?.authorization === 'User' && (
-          <Route path="/user" element={<UserPage />} />
-        )}
+        <Route
+          path="/user"
+          element={
+            <ProtectedRoute role="user">
+              <UserPage />
+            </ProtectedRoute>
+          }
+        />
 
-        {user?.authorization === 'Admin' && (
-          <Route path="/admin" element={<AdminPage />} />
-        )}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="machine" element={<Machine />}>
+            <Route index element={<MachineList />} />
+            <Route path="create" element={<CreateMachinePage />} />
+          </Route>
+        </Route>
 
         <Route
           path="*"
           element={
-            user?.authorization === 'Admin' ? <Navigate to="/admin" /> :
-            user?.authorization === 'User' ? <Navigate to="/user" /> :
-            <Navigate to="/" />
+            user?.authorization === "admin" ? <Navigate to="/admin" replace /> :
+            user?.authorization === "user" ? <Navigate to="/user" replace /> :
+            <Navigate to="/" replace />
           }
         />
       </Routes>
     </Router>
-  )
+  );
 }
-
-export default App
