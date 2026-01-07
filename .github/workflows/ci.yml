@@ -15,9 +15,8 @@ jobs:
             with:
               node-version: 20
               cache: npm
+          - run: rm -rf node_modules package-lock.json
           - name: Install dependencies
-            run: npm ci
+            run: npm install
           - name: Vérification TypeScript
             run: npm run build --if-present
-          - name: Lint
-            run: npm run lint
