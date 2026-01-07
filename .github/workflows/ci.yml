@@ -15,6 +15,7 @@ jobs:
             with:
               node-version: 20
               cache: npm
+          - run: rm -rf node_modules package-lock.json
           - name: Install dependencies
             run: npm install
           - name: Vérification TypeScript
