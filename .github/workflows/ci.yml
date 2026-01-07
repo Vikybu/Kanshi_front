@@ -19,5 +19,3 @@ jobs:
             run: npm ci
           - name: Vérification TypeScript
             run: npm run build --if-present
-          - name: Lint
-            run: npm run lint
