@@ -6,6 +6,7 @@ import AdminPage from "./pages/AdminPage.tsx";
 import UserPage from "./pages/UserPage.tsx";
 import Machine from "./pages/Machine.tsx";
 import CreateMachinePage from "./pages/CreateMachinePage.tsx";
+import FabricationOrderPage from "./pages/FabricationOrderPage.tsx";
 import MachineList from "./pages/MachineList.tsx";
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
@@ -45,6 +46,10 @@ export default function App() {
             <Route index element={<MachineList />} />
             <Route path="create" element={<CreateMachinePage />} />
           </Route>
+
+          <Route path="of" element={<FabricationOrderPage />}>
+          </Route>
+
         </Route>
 
         <Route

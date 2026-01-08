@@ -2,6 +2,8 @@
 @import url('https://fonts.googleapis.com/css2?family=BIZ+UDMincho&family=Questrial&family=Zen+Maru+Gothic&display=swap');
 
 @theme {
+  --title : 30px;
+
   --color-primary: #1F3A5F;
   --color-secondary: #F4F6F8;
   --color-text: #263238;
@@ -9,4 +11,17 @@
   --font-family-big-title: 'BIZ UDMincho', serif;
   --font-family-small-title: 'Questrial', sans-serif;
   --font-family-text: 'Zen Maru Gothic', sans-serif;
+  
 }
+
+  .font-big-title {
+    font-family: var(--font-family-big-title);
+  }
+
+  .font-small-title {
+    font-family: var(--font-family-small-title);
+  }
+
+  .font-text {
+    font-family: var(--font-family-text);
+  }
