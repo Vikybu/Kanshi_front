@@ -3,6 +3,7 @@ import AdminPage from "../pages/AdminPage";
 import UserPage from "../pages/UserPage";
 import MachinePage from "../pages/MachineList";
 import CreateMachinePage from "../pages/CreateMachinePage";
+import FabricationOrderPage from "../pages/FabricationOrderPage";
 
 const routes = [
   {
@@ -17,7 +18,8 @@ const routes = [
     children: [
       {path: 'machine', element: <MachinePage />, children : [
         {path: 'create', element: <CreateMachinePage />}
-      ]}
+      ]},
+      {path: 'fo', element:<FabricationOrderPage />}
     ]
   },
   {
