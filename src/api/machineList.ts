@@ -1,6 +1,14 @@
-export default async function getMachineList() {
+export interface RawMaterial {
+  id: number;
+  name: string;
+  type: string;
+  reference: string;
+}
+
+export default async function getRawMaterials(): Promise<RawMaterial[]> {
   try {
-    const response = await fetch("http://localhost:8000/api/admin/machine", {
+    const BASE_URL = "http://localhost:8000/api";
+    const response = await fetch(`${BASE_URL}/raw-materials`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -8,14 +16,13 @@ export default async function getMachineList() {
     });
 
     if (!response.ok) {
-      throw new Error("Erreur lors de la récupération des machines");
+      throw new Error("Erreur lors de la récupération des matières premières");
     }
 
-    const data = await response.json();
-    console.log(data);
+    const data: RawMaterial[] = await response.json();
     return data;
   } catch (error) {
-    console.error("Erreur lors de la récupération des machines :", error);
+    console.error("Erreur lors de la récupération des matières premières :", error);
     throw error;
   }
 }

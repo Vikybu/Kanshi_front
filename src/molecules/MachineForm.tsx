@@ -19,7 +19,7 @@ interface MachineFormProps {
     onSubmit: (e : React.FormEvent<HTMLFormElement>) => void;  
 };
 
-const loginForm = ({
+const MachineForm = ({
     machine_name, 
     short_name,
     theoritical_industrial_pace,
@@ -60,4 +60,4 @@ const loginForm = ({
     )
 }
 
-export default loginForm;
+export default MachineForm;

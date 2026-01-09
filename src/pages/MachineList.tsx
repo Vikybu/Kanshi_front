@@ -25,6 +25,7 @@ export default function MachineList() {
               onClick={() => navigate("/admin/machine/create")}>
               Ajouter une machine
       </button>
+      
       <h1 className="text-secondary font-big-title">Listes de machines</h1>
       <div className="flex flex-row gap-3">
         {machines.map(machine => (

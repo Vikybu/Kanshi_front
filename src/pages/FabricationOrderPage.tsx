@@ -1,7 +1,9 @@
-export default function FabricationOrder (){
+import AddProductionOrderForm from "../components/AddProductionOrder"
+
+export default function FabricationOrderPage (){
     return (
         <div>
-            <p>Bonjour</p>
+            <AddProductionOrderForm />
         </div>
     )
 }
