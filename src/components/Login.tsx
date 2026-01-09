@@ -37,7 +37,9 @@ export default function Login() {
             onRegistration_numberChange={setRegistration_number}
             onPasswordChange={setPassword}
             onSubmit={handleSubmit}/>
+            {registration_number}
         </div>
+
        </>
     )
 }

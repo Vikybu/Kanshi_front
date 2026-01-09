@@ -1,6 +1,6 @@
 interface InputProps {
     children?:React.ReactNode;
-    type: "text" | "password" | "email" | "textarea";
+    type: "text" | "password" | "email" | "textarea" | "number" | "time";
     identification: string;
     value: string | number;
     onChange: (value: string) => void;
