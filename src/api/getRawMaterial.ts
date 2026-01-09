@@ -1,6 +1,6 @@
 export default async function getRawMaterial() {
   try {
-    const response = await fetch("http://localhost:8000/api/admin/machine", {
+    const response = await fetch("http://localhost:8000/api/admin/raw_material", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -1,6 +1,6 @@
 interface SelectProps {
-  children?: React.ReactNode; // options du select
-  label?: string; // texte affiché au-dessus du select
+  children?: React.ReactNode;
+  label?: string;
   value: string | number;
   onChange: (value: string) => void;
 }

@@ -1,4 +1,5 @@
 import getRawMaterial from "../api/getRawMaterial";
+import machineList from "../api/machineList";
 import { Button } from "../atoms/Button";
 import { Input } from "../atoms/Input";
 import { Select } from "../atoms/Select";
@@ -8,6 +9,11 @@ interface RawMaterial {
   id: number;
   name: string;
   reference: string;
+}
+
+interface Machine {
+  id: number;
+  machine_name: string;
 }
 
 interface ProductionOrderFormProps {
@@ -49,15 +55,19 @@ export default function ProductionOrderForm (
   onFinal_product_nameChange,
   onSubmit,}
 : ProductionOrderFormProps) {
+
   const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>([]);
-  const [selectedRawMaterial, setSelectedRawMaterial] = useState<string>("");
+
+  const [machines, setMachines] = useState<Machine[]>([]);
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data: RawMaterial[] = await getRawMaterial(); // appelle ton API
-        setRawMaterials(data);
+        const dataRawmaterial: RawMaterial[] = await getRawMaterial();
+        setRawMaterials(dataRawmaterial);
+        const dataMachine: Machine[] = await machineList();
+        setMachines(dataMachine);
       } catch (error) {
         console.error("Erreur lors du fetch des matières premières", error);
       }
@@ -85,15 +95,15 @@ export default function ProductionOrderForm (
         Référence de l'ordre de fabrication
       </Input>
 
-       <Select
+      <Select
         label="Choisir une matière première"
-        value={selectedRawMaterial}
-        onChange={setSelectedRawMaterial}
+        value={raw_material}
+        onChange={onRaw_materialChange}
       >
         <option value="">-- Sélectionner --</option>
         {rawMaterials.map((rawMaterial) => (
           <option key={rawMaterial.id} value={rawMaterial.id}>
-            {rawMaterial.name}
+            {rawMaterial.name} {rawMaterial.reference}
           </option>
         ))}
       </Select>
@@ -107,14 +117,18 @@ export default function ProductionOrderForm (
         Quantité de matière première
       </Input>
 
-      <Input
-        type="text"
-        identification="machine_name"
+            <Select
+        label="Choisir la machine"
         value={machine_name}
         onChange={onMachine_nameChange}
       >
-        Machine à utiliser
-      </Input>
+        <option value="">-- Sélectionner --</option>
+        {machines.map((machine) => (
+          <option key={machine.id} value={machine.id}>
+            {machine.machine_name}
+          </option>
+        ))}
+      </Select>
 
       <Input
         type="time"
