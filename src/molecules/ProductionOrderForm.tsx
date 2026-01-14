@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import getRawMaterial from "../api/getRawMaterial";
 import machineList from "../api/machineList";
 import simulationProductionOrder from "../api/simulationProductionOrderForm";
+import createProductionOrder from "../api/createProductionOrder";
 import getFinalProduct from "../api/getFinalProducts";
 import { Button } from "../atoms/Button";
 import { Input } from "../atoms/Input";
@@ -27,11 +28,21 @@ interface FinalProduct {
   quantity_of_product: number;
 }
 
-interface ProductionOrderFormProps {
-  onSubmit: (formData: any) => void;
-}
+export default function ProductionOrderForm() {
+  const initialForm = {
+    production_order_reference: "",
+    raw_material_id: null as number | null,
+    theoritical_raw_material_quantity: null as number | null,
+    measurement_unit: "",
+    machine_id: null as number | null,
+    machine_theoritical_industrial_pace: null as number | null,
+    final_product_id: null as number | null,
+    final_product_quantity_per_product: null as number | null,
+    theoritical_final_product_quantity: null as number | null,
+    start_time: "",
+    end_time: "",
+};
 
-export default function ProductionOrderForm({ onSubmit }: ProductionOrderFormProps) {
   const [form, setForm] = useState({
   production_order_reference: "",
 
@@ -56,10 +67,10 @@ export default function ProductionOrderForm({ onSubmit }: ProductionOrderFormPro
   const [finalProducts, setFinalProducts] = useState<FinalProduct[]>([]);
   const [simulation, setSimulation] = useState<any>(null);
   const [modifiableReference, setModifiableReference] = useState("");
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const today = new Date()
   const minDateTime: string = today.toISOString().slice(0, 16);
-  const actualYear: string = today.getFullYear();
-  const production_order_reference = `OF${actualYear}${modifiableReference}`;
+  const actualYear: string = today.getFullYear().toString();
   
 
   useEffect(() => {
@@ -82,14 +93,15 @@ export default function ProductionOrderForm({ onSubmit }: ProductionOrderFormPro
 
   useEffect(() => {
   const simulate = async () => {
-  if (!form.start_time) return;
+    if (!form.start_time) return;
+    
     const selectedDate = new Date(form.start_time);
     const now = new Date();
 
-  if (selectedDate < now) {
-    alert("Vous ne pouvez pas choisir une date passée");
-    return;
-  }
+    if (selectedDate < now) {
+      alert("Vous ne pouvez pas choisir une date passée");
+      return;
+    }
 
     if (
       form.theoritical_raw_material_quantity &&
@@ -99,31 +111,20 @@ export default function ProductionOrderForm({ onSubmit }: ProductionOrderFormPro
     ) {
       try {
         const formData = {
-          theoritical_raw_material_quantity:
-            form.theoritical_raw_material_quantity,
-
-          final_product_quantity_per_product:
-            form.final_product_quantity_per_product,
-
-          machine_theoritical_industrial_pace:
-            form.machine_theoritical_industrial_pace,
-
+          theoritical_raw_material_quantity: form.theoritical_raw_material_quantity,
+          final_product_quantity_per_product: form.final_product_quantity_per_product,
+          machine_theoritical_industrial_pace: form.machine_theoritical_industrial_pace,
           machine_id: form.machine_id,
-
           measurement_unit: form.measurement_unit,
-
           start_time: form.start_time,
         };
-        console.log(formData)
-
         const data = await simulationProductionOrder(formData);
-
+        
         setSimulation(data);
 
         setForm((prev) => ({
           ...prev,
-          theoritical_final_product_quantity:
-            data.theoritical_final_product_quantity,
+          theoritical_final_product_quantity: data.theoritical_final_product_quantity,
           end_time: data.end_time,
         }));
       } catch (error) {
@@ -140,16 +141,77 @@ export default function ProductionOrderForm({ onSubmit }: ProductionOrderFormPro
   form.start_time,
 ]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  onSubmit({
-    ...form,
-    production_order_reference: `OF${actualYear}${modifiableReference}`,
-  });
-};
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const toLaravelDateTime = (date?: string | null) => {
+      if (!date) {
+        return new Date().toISOString().slice(0, 19).replace("T", " ");
+      }
+
+      if (date.includes("/")) {
+        const [datePart, timePart] = date.split(" ");
+        const [day, month, year] = datePart.split("/");
+        const isoDate = `${year}-${month}-${day}T${timePart}`;
+        const d = new Date(isoDate);
+        
+        if (isNaN(d.getTime())) {
+          return new Date().toISOString().slice(0, 19).replace("T", " ");
+        }
+        return d.toISOString().slice(0, 19).replace("T", " ");
+      }
+
+    const d = new Date(date);
+      if (isNaN(d.getTime())) {
+        return new Date().toISOString().slice(0, 19).replace("T", " ");
+      }
+      return d.toISOString().slice(0, 19).replace("T", " ");
+    };
+
+    const payload = {
+      production_order_reference: `OF${actualYear}${modifiableReference ?? ""}`,
+
+      raw_material_id: form.raw_material_id,
+      machine_id: form.machine_id,
+      final_product_id: form.final_product_id,
+
+      theoritical_raw_material_quantity: Number(form.theoritical_raw_material_quantity ?? 0),
+      actual_raw_material_quantity: 0,
+
+      start_time: toLaravelDateTime(form.start_time),
+      end_time: toLaravelDateTime(form.end_time),
+
+      status: "plannified",
+
+      theoritical_final_product_quantity: Number(form.theoritical_final_product_quantity ?? 0),
+      actual_final_product_quantity: 0,
+    };
+
+    console.log("Payload envoyé au backend :", payload);
+
+    try {
+      await createProductionOrder(payload);
+      setSuccessMessage("✅ Ordre de production ajouté avec succès");
+
+      setTimeout(() => setSuccessMessage(null), 3000);
+
+      setForm(initialForm);
+      setModifiableReference("");
+      setSimulation(null);
+    } catch (error) {
+      console.error("Erreur lors de l'ajout :", error);
+    }
+  };
 
   return (
+    <>
+    {successMessage && (
+      <div className="bg-green-100 text-green-800 border border-green-300 rounded-lg px-4 py-2">
+        {successMessage}
+      </div>
+      )}
     <form onSubmit={handleSubmit} className="bg-secondary rounded-xl p-6 w-[900px] mx-auto flex flex-col space-y-4 justify-center">
+      
 
       <h1 className="size-smalltitle font-small-title text-center text-text underline decoration-primary decoration-2 underline-offset-6">Création d'un nouvel ordre de fabrication</h1>
 
@@ -165,7 +227,7 @@ export default function ProductionOrderForm({ onSubmit }: ProductionOrderFormPro
           className="border border-primary rounded-lg px-4 py-1 flex-1"
           type='number'
           value={modifiableReference}
-          onChange={(e) => setModifiableReference(e.target.value)}
+          onChange={(e) => setModifiableReference(e.target.value.slice(0, 6))}
           />
         </label>
       </div>
@@ -279,6 +341,7 @@ export default function ProductionOrderForm({ onSubmit }: ProductionOrderFormPro
             layout="row"
             value={form.end_time ?? ""}
             disabled
+            onChange={(value) => setForm({ ...form, end_time: value })}
           >
             Heure de fin (calculée automatiquement)
           </Input>
@@ -319,6 +382,7 @@ export default function ProductionOrderForm({ onSubmit }: ProductionOrderFormPro
         </Button>
       </div>
     </form>
+    </>
   );
 }
 
