@@ -11,6 +11,10 @@
   --font-family-big-title: 'BIZ UDMincho', serif;
   --font-family-small-title: 'Questrial', sans-serif;
   --font-family-text: 'Zen Maru Gothic', sans-serif;
+
+  --bigtitle: 2rem;
+  --smalltitle: 1.5rem;
+  --text:0.9rem;
   
 }
 
@@ -24,4 +28,16 @@
 
   .font-text {
     font-family: var(--font-family-text);
+  }
+
+  .size-bigtitle {
+  font-size: var(--bigtitle);
+  }
+
+  .size-smalltitle {
+  font-size: var(--smalltitle);
+  }
+
+  .size-text {
+  font-size: var(--text);
   }
