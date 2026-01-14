@@ -4,6 +4,7 @@ import machineList from "../api/machineList";
 import simulationProductionOrder from "../api/simulationProductionOrderForm";
 import createProductionOrder from "../api/createProductionOrder";
 import getFinalProduct from "../api/getFinalProducts";
+import checkConflits from "../api/checkConflits";
 import { Button } from "../atoms/Button";
 import { Input } from "../atoms/Input";
 import { Select } from "../atoms/Select";
@@ -29,6 +30,25 @@ interface FinalProduct {
 }
 
 export default function ProductionOrderForm() {
+
+  const convertToDatetimeLocal = (dateString: string) => {
+    // Backend format : "14/01/2026 20:00"
+    if (dateString.includes("/")) {
+      const [datePart, timePart] = dateString.split(" ");
+      const [day, month, year] = datePart.split("/");
+      return `${year}-${month}-${day}T${timePart}`;
+    }
+    return dateString;
+  };
+
+  const toLaravelDateTime = (date: string) => {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) {
+      throw new Error("Date invalide : " + date);
+    }
+    return d.toISOString().slice(0, 19).replace("T", " ");
+  };
+
   const initialForm = {
     production_order_reference: "",
     raw_material_id: null as number | null,
@@ -65,117 +85,97 @@ export default function ProductionOrderForm() {
   const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>([]);
   const [machines, setMachines] = useState<Machine[]>([]);
   const [finalProducts, setFinalProducts] = useState<FinalProduct[]>([]);
-  const [simulation, setSimulation] = useState<any>(null);
-  const [modifiableReference, setModifiableReference] = useState("");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const today = new Date()
-  const minDateTime: string = today.toISOString().slice(0, 16);
-  const actualYear: string = today.getFullYear().toString();
+  const [conflict, setConflict] = useState(false);
+  const [modifiableReference, setModifiableReference] = useState("");
+
+  const today = new Date();
+  const minDateTime = today.toISOString().slice(0, 16);
+  const actualYear = today.getFullYear().toString();
   
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const dataRawmaterial = await getRawMaterial();
-        setRawMaterials(dataRawmaterial);
-
-        const dataMachine = await machineList();
-        setMachines(dataMachine);
-
-        const dataFinalProduct = await getFinalProduct();
-        setFinalProducts(dataFinalProduct);
-      } catch (error) {
-        console.error("Erreur lors du fetch des matières premières ou machines", error);
-      }
+      setRawMaterials(await getRawMaterial());
+      setMachines(await machineList());
+      setFinalProducts(await getFinalProduct());
     };
     fetchData();
   }, []);
 
   useEffect(() => {
-  const simulate = async () => {
-    if (!form.start_time) return;
-    
-    const selectedDate = new Date(form.start_time);
-    const now = new Date();
-
-    if (selectedDate < now) {
-      alert("Vous ne pouvez pas choisir une date passée");
-      return;
-    }
-
-    if (
-      form.theoritical_raw_material_quantity &&
-      form.machine_theoritical_industrial_pace &&
-      form.final_product_quantity_per_product &&
-      form.start_time
-    ) {
-      try {
-        const formData = {
-          theoritical_raw_material_quantity: form.theoritical_raw_material_quantity,
-          final_product_quantity_per_product: form.final_product_quantity_per_product,
-          machine_theoritical_industrial_pace: form.machine_theoritical_industrial_pace,
-          machine_id: form.machine_id,
-          measurement_unit: form.measurement_unit,
-          start_time: form.start_time,
-        };
-        const data = await simulationProductionOrder(formData);
-        
-        setSimulation(data);
-
-        setForm((prev) => ({
-          ...prev,
-          theoritical_final_product_quantity: data.theoritical_final_product_quantity,
-          end_time: data.end_time,
-        }));
-      } catch (error) {
-        console.error("Erreur lors de la simulation :", error);
-      }
-    }
-  };
-
-  simulate();
-}, [
-  form.theoritical_raw_material_quantity,
-  form.machine_theoritical_industrial_pace,
-  form.final_product_quantity_per_product,
-  form.start_time,
-]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const toLaravelDateTime = (date?: string | null) => {
-      if (!date) {
-        return new Date().toISOString().slice(0, 19).replace("T", " ");
+    const simulate = async () => {
+      if (
+        !form.start_time ||
+        !form.theoritical_raw_material_quantity ||
+        !form.machine_theoritical_industrial_pace ||
+        !form.final_product_quantity_per_product
+      ) {
+        return;
       }
 
-      if (date.includes("/")) {
-        const [datePart, timePart] = date.split(" ");
-        const [day, month, year] = datePart.split("/");
-        const isoDate = `${year}-${month}-${day}T${timePart}`;
-        const d = new Date(isoDate);
-        
-        if (isNaN(d.getTime())) {
-          return new Date().toISOString().slice(0, 19).replace("T", " ");
-        }
-        return d.toISOString().slice(0, 19).replace("T", " ");
+      const selectedDate = new Date(form.start_time);
+      if (selectedDate < new Date()) {
+        alert("Vous ne pouvez pas choisir une date passée");
+        return;
       }
 
-    const d = new Date(date);
-      if (isNaN(d.getTime())) {
-        return new Date().toISOString().slice(0, 19).replace("T", " ");
-      }
-      return d.toISOString().slice(0, 19).replace("T", " ");
+      const data = await simulationProductionOrder({
+        theoritical_raw_material_quantity: form.theoritical_raw_material_quantity,
+        final_product_quantity_per_product: form.final_product_quantity_per_product,
+        machine_theoritical_industrial_pace: form.machine_theoritical_industrial_pace,
+        machine_id: form.machine_id,
+        measurement_unit: form.measurement_unit,
+        start_time: form.start_time,
+      });
+
+      setForm((prev) => ({
+        ...prev,
+        theoritical_final_product_quantity:
+          data.theoritical_final_product_quantity,
+        end_time: convertToDatetimeLocal(data.end_time),
+      }));
     };
 
-    const payload = {
-      production_order_reference: `OF${actualYear}${modifiableReference ?? ""}`,
+    simulate();
+  }, [
+    form.start_time,
+    form.theoritical_raw_material_quantity,
+    form.machine_theoritical_industrial_pace,
+    form.final_product_quantity_per_product,
+  ]);
 
+
+  useEffect(() => {
+    const check = async () => {
+      if (!form.machine_id || !form.start_time || !form.end_time) {
+        setConflict(false);
+        return;
+      }
+
+      const data = await checkConflits(
+        form.machine_id,
+        toLaravelDateTime(form.start_time),
+        toLaravelDateTime(form.end_time)
+      );
+
+      setConflict(data.conflict);
+    };
+
+    check();
+  }, [form.machine_id, form.start_time, form.end_time]);
+
+     const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      production_order_reference: `OF${actualYear}${modifiableReference}`,
       raw_material_id: form.raw_material_id,
       machine_id: form.machine_id,
       final_product_id: form.final_product_id,
 
-      theoritical_raw_material_quantity: Number(form.theoritical_raw_material_quantity ?? 0),
+      theoritical_raw_material_quantity:
+        Number(form.theoritical_raw_material_quantity),
       actual_raw_material_quantity: 0,
 
       start_time: toLaravelDateTime(form.start_time),
@@ -183,24 +183,18 @@ export default function ProductionOrderForm() {
 
       status: "plannified",
 
-      theoritical_final_product_quantity: Number(form.theoritical_final_product_quantity ?? 0),
+      theoritical_final_product_quantity:
+        Number(form.theoritical_final_product_quantity),
       actual_final_product_quantity: 0,
     };
 
-    console.log("Payload envoyé au backend :", payload);
+    await createProductionOrder(payload);
 
-    try {
-      await createProductionOrder(payload);
-      setSuccessMessage("✅ Ordre de production ajouté avec succès");
+    setSuccessMessage("✅ Ordre de production ajouté avec succès");
+    setTimeout(() => setSuccessMessage(null), 3000);
 
-      setTimeout(() => setSuccessMessage(null), 3000);
-
-      setForm(initialForm);
-      setModifiableReference("");
-      setSimulation(null);
-    } catch (error) {
-      console.error("Erreur lors de l'ajout :", error);
-    }
+    setForm(initialForm);
+    setModifiableReference("");
   };
 
   return (
@@ -347,14 +341,14 @@ export default function ProductionOrderForm() {
           </Input>
         </div>
     
-      {simulation?.conflit_planning && (
-        <p className="text-red-600 font-bold">
-          ⚠️ Conflit : cette machine est déjà occupée à cet horaire !
-        </p>
-      )}
+      {conflict && (
+    <p className="text-red-600 font-bold">
+        ⚠️ Cette machine est déjà occupée pendant cette plage horaire !
+    </p>
+)}
 
       <div className="flex space-x-2">
-        <Button type="submit">Ajouter l'ordre de fabrication</Button>
+        <Button disabled={conflict} type="submit">Ajouter l'ordre de fabrication</Button>
         <Button
           type="reset"
           onClick={() =>
