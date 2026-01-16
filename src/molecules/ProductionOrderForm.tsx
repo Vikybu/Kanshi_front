@@ -56,7 +56,7 @@ export default function ProductionOrderForm() {
     measurement_unit: "",
     machine_id: null as number | null,
     machine_theoritical_industrial_pace: null as number | null,
-    final_product_id: null as number | null,
+    final_products_id: null as number | null,
     final_product_quantity_per_product: null as number | null,
     theoritical_final_product_quantity: null as number | null,
     start_time: "",
@@ -73,7 +73,7 @@ export default function ProductionOrderForm() {
   machine_id: null as number | null,
   machine_theoritical_industrial_pace: null as number | null,
 
-  final_product_id: null as number | null,
+  final_products_id: null as number | null,
   final_product_quantity_per_product: null as number | null,
 
   theoritical_final_product_quantity: null as number | null,
@@ -172,7 +172,7 @@ export default function ProductionOrderForm() {
       production_order_reference: `OF${actualYear}${modifiableReference}`,
       raw_material_id: form.raw_material_id,
       machine_id: form.machine_id,
-      final_product_id: form.final_product_id,
+      final_products_id: form.final_products_id,
 
       theoritical_raw_material_quantity:
         Number(form.theoritical_raw_material_quantity),
@@ -285,7 +285,7 @@ export default function ProductionOrderForm() {
       <Select
         label="Choisir le produit final"
         layout="row"
-        value={form.final_product_id ?? ""}
+        value={form.final_products_id ?? ""}
         onChange={(value) => {
           const selectedFinalProduct = finalProducts.find(
             (product) => product.id === Number(value)
@@ -293,7 +293,7 @@ export default function ProductionOrderForm() {
 
           setForm({
             ...form,
-            final_product_id: selectedFinalProduct?.id ?? null,
+            final_products_id: selectedFinalProduct?.id ?? null,
             final_product_quantity_per_product:
               selectedFinalProduct?.quantity_of_product ?? null,
           });
@@ -330,7 +330,7 @@ export default function ProductionOrderForm() {
           </Input>
 
           <Input
-            type="text"
+            type="datetime-local"
             identification="end_time"
             layout="row"
             value={form.end_time ?? ""}
@@ -362,7 +362,7 @@ export default function ProductionOrderForm() {
               machine_theoritical_industrial_pace: null,
               measurement_unit: "",
 
-              final_product_id: null,
+              final_products_id: null,
               final_product_quantity_per_product: null,
 
               theoritical_final_product_quantity: null,
