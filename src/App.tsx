@@ -28,7 +28,7 @@ export default function App() {
         <Route
           path="/user"
           element={
-            <ProtectedRoute role="user">
+            <ProtectedRoute role="operator">
               <UserPage />
             </ProtectedRoute>
           }
@@ -56,7 +56,7 @@ export default function App() {
           path="*"
           element={
             user?.authorization === "admin" ? <Navigate to="/admin" replace /> :
-            user?.authorization === "user" ? <Navigate to="/user" replace /> :
+            user?.authorization === "operator" ? <Navigate to="/user" replace /> :
             <Navigate to="/" replace />
           }
         />

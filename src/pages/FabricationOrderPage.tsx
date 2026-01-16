@@ -39,7 +39,7 @@ export default function FabricationOrderPage (){
     }, [])
 
     return (
-        <div className="flex flex-col gap-3 bg-primary min-h-screen p-4 ">
+        <div className="bg-secondary rounded-xl shadow-md p-6 flex items-center justify-between">
             <div className="flex flex-col justify-center align-items gap-3">
                 {productionOrders.map(productionOrder => (
                 <ProductionOrderCard 
@@ -54,6 +54,7 @@ export default function FabricationOrderPage (){
                 name={productionOrder.raw_materials?.[0]?.name ?? "—"}
                 measurement_unit={productionOrder.raw_materials?.[0]?.measurement_unit ?? "—"}
                 status={productionOrder.status}
+                showButton={false}
                 />
                 ))}
                 
