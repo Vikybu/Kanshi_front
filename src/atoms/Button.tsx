@@ -1,16 +1,20 @@
 interface Props {
-    children?:React.ReactNode;
-    type?: "submit" | "reset";
-    disabled?: boolean;
-    onClick?: () => void; 
+  children?: React.ReactNode;
+  type?: "submit" | "reset";
+  disabled?: boolean;
+  showButton?: boolean;
+  onClick?: () => void;
 }
 
 export const Button = ({
   children,
   type,
   disabled = false,
+  showButton = true,
   onClick,
 }: Props) => {
+  if (!showButton) return null;
+
   return (
     <button
       type={type}
@@ -19,12 +23,16 @@ export const Button = ({
       className={`
         bg-primary size-text text-white font-medium px-6 py-2 rounded-lg
         transition duration-200
-        ${disabled
-          ? "opacity-50 cursor-not-allowed"
-          : "hover:bg-primary/90 cursor-pointer"}
+        ${
+          disabled
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:bg-primary/90 cursor-pointer"
+        }
       `}
     >
       {children}
     </button>
   );
 };
+
+export default Button

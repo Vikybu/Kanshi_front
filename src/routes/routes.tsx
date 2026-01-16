@@ -26,7 +26,12 @@ const routes = [
     name: "user",
     path: "/user",
     element: <UserPage />,
-    roles: ["user"],
+    roles: ["operator"],
+    children: [
+      {path: 'of', element: <MachinePage />, children : [
+        {path: 'production', element: <CreateMachinePage />}
+      ]}
+    ]
   },
 ];
 
