@@ -18,7 +18,7 @@ interface RawMaterial {
 interface Machine {
   id: number;
   machine_name: string;
-  measurement_unit: string,
+  measurement_unit: string;
   theoritical_industrial_pace: number;
 }
 
@@ -29,10 +29,52 @@ interface FinalProduct {
   quantity_of_product: number;
 }
 
+interface FormState {
+  production_order_reference: string;
+  raw_material_id: number | null;
+  theoritical_raw_material_quantity: number | null;
+  measurement_unit: string;
+  machine_id: number | null;
+  machine_theoritical_industrial_pace: number | null;
+  final_products_id: number | null;
+  final_product_quantity_per_product: number | null;
+  theoritical_final_product_quantity: number | null;
+  start_time: string;
+  end_time: string;
+  real_start_time: string | null;
+  real_end_time: string | null;
+}
+
 export default function ProductionOrderForm() {
+  const today = new Date();
+  const minDateTime = today.toISOString().slice(0, 16);
+  const actualYear = today.getFullYear().toString();
+
+  const initialForm: FormState = {
+    production_order_reference: "",
+    raw_material_id: null,
+    theoritical_raw_material_quantity: null,
+    measurement_unit: "",
+    machine_id: null,
+    machine_theoritical_industrial_pace: null,
+    final_products_id: null,
+    final_product_quantity_per_product: null,
+    theoritical_final_product_quantity: null,
+    start_time: "",
+    end_time: "",
+    real_start_time: null,
+    real_end_time: null,
+  };
+
+  const [form, setForm] = useState<FormState>(initialForm);
+  const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>([]);
+  const [machines, setMachines] = useState<Machine[]>([]);
+  const [finalProducts, setFinalProducts] = useState<FinalProduct[]>([]);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [conflict, setConflict] = useState(false);
+  const [modifiableReference, setModifiableReference] = useState("");
 
   const convertToDatetimeLocal = (dateString: string) => {
-    // Backend format : "14/01/2026 20:00"
     if (dateString.includes("/")) {
       const [datePart, timePart] = dateString.split(" ");
       const [day, month, year] = datePart.split("/");
@@ -43,56 +85,9 @@ export default function ProductionOrderForm() {
 
   const toLaravelDateTime = (date: string) => {
     const d = new Date(date);
-    if (isNaN(d.getTime())) {
-      throw new Error("Date invalide : " + date);
-    }
+    if (isNaN(d.getTime())) throw new Error("Date invalide : " + date);
     return d.toISOString().slice(0, 19).replace("T", " ");
   };
-
-  const initialForm = {
-    production_order_reference: "",
-    raw_material_id: null as number | null,
-    theoritical_raw_material_quantity: null as number | null,
-    measurement_unit: "",
-    machine_id: null as number | null,
-    machine_theoritical_industrial_pace: null as number | null,
-    final_products_id: null as number | null,
-    final_product_quantity_per_product: null as number | null,
-    theoritical_final_product_quantity: null as number | null,
-    start_time: "",
-    end_time: "",
-};
-
-  const [form, setForm] = useState({
-  production_order_reference: "",
-
-  raw_material_id: null as number | null,
-  theoritical_raw_material_quantity: null as number | null,
-  measurement_unit: "",  
-
-  machine_id: null as number | null,
-  machine_theoritical_industrial_pace: null as number | null,
-
-  final_products_id: null as number | null,
-  final_product_quantity_per_product: null as number | null,
-
-  theoritical_final_product_quantity: null as number | null,
-
-  start_time: "",
-  end_time: "",
-});
-
-  const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>([]);
-  const [machines, setMachines] = useState<Machine[]>([]);
-  const [finalProducts, setFinalProducts] = useState<FinalProduct[]>([]);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [conflict, setConflict] = useState(false);
-  const [modifiableReference, setModifiableReference] = useState("");
-
-  const today = new Date();
-  const minDateTime = today.toISOString().slice(0, 16);
-  const actualYear = today.getFullYear().toString();
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,6 +98,7 @@ export default function ProductionOrderForm() {
     fetchData();
   }, []);
 
+  // Simulation automatique de l'ordre
   useEffect(() => {
     const simulate = async () => {
       if (
@@ -110,9 +106,7 @@ export default function ProductionOrderForm() {
         !form.theoritical_raw_material_quantity ||
         !form.machine_theoritical_industrial_pace ||
         !form.final_product_quantity_per_product
-      ) {
-        return;
-      }
+      ) return;
 
       const selectedDate = new Date(form.start_time);
       if (selectedDate < new Date()) {
@@ -131,12 +125,10 @@ export default function ProductionOrderForm() {
 
       setForm((prev) => ({
         ...prev,
-        theoritical_final_product_quantity:
-          data.theoritical_final_product_quantity,
+        theoritical_final_product_quantity: data.theoritical_final_product_quantity,
         end_time: convertToDatetimeLocal(data.end_time),
       }));
     };
-
     simulate();
   }, [
     form.start_time,
@@ -145,7 +137,7 @@ export default function ProductionOrderForm() {
     form.final_product_quantity_per_product,
   ]);
 
-
+  // Vérification des conflits
   useEffect(() => {
     const check = async () => {
       if (!form.machine_id || !form.start_time || !form.end_time) {
@@ -158,14 +150,12 @@ export default function ProductionOrderForm() {
         toLaravelDateTime(form.start_time),
         toLaravelDateTime(form.end_time)
       );
-
       setConflict(data.conflict);
     };
-
     check();
   }, [form.machine_id, form.start_time, form.end_time]);
 
-     const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const payload = {
@@ -173,18 +163,14 @@ export default function ProductionOrderForm() {
       raw_material_id: form.raw_material_id,
       machine_id: form.machine_id,
       final_products_id: form.final_products_id,
-
-      theoritical_raw_material_quantity:
-        Number(form.theoritical_raw_material_quantity),
+      theoritical_raw_material_quantity: Number(form.theoritical_raw_material_quantity),
       actual_raw_material_quantity: 0,
-
       start_time: toLaravelDateTime(form.start_time),
       end_time: toLaravelDateTime(form.end_time),
-
+      real_start_time: null,
+      real_end_time: null,
       status: "plannified",
-
-      theoritical_final_product_quantity:
-        Number(form.theoritical_final_product_quantity),
+      theoritical_final_product_quantity: Number(form.theoritical_final_product_quantity),
       actual_final_product_quantity: 0,
     };
 
@@ -192,130 +178,125 @@ export default function ProductionOrderForm() {
 
     setSuccessMessage("✅ Ordre de production ajouté avec succès");
     setTimeout(() => setSuccessMessage(null), 3000);
-
     setForm(initialForm);
     setModifiableReference("");
   };
 
   return (
     <>
-    {successMessage && (
-      <div className="bg-green-100 text-green-800 border border-green-300 rounded-lg px-4 py-2">
-        {successMessage}
-      </div>
+      {successMessage && (
+        <div className="bg-green-100 text-green-800 border border-green-300 rounded-lg px-4 py-2">
+          {successMessage}
+        </div>
       )}
-    <form onSubmit={handleSubmit} className="bg-secondary rounded-xl p-6 w-[900px] mx-auto flex flex-col space-y-4 justify-center">
-      
 
-      <h1 className="size-smalltitle font-small-title text-center text-text underline decoration-primary decoration-2 underline-offset-6">Création d'un nouvel ordre de fabrication</h1>
-
-      <div className="flex flex-row gap-2">
-        <label className="flex flex-row items-center gap-2 size-text font-family-[--font-family-text] text-text whitespace-nowrap">Référence de l'ordre de fabrication :
-          <input 
-          className="border border-primary rounded-lg px-4 py-1 w-24 text-center"
-          type = "text"
-          disabled = {true}
-          value={`OF${actualYear}`}
-          />
-          <input 
-          className="border border-primary rounded-lg px-4 py-1 flex-1"
-          type='number'
-          value={modifiableReference}
-          onChange={(e) => setModifiableReference(e.target.value.slice(0, 6))}
-          />
-        </label>
-      </div>
-
-      <Select
-        label="Choisir une matière première"
-        layout="row"
-        value={form.raw_material_id === null ? "" : String(form.raw_material_id)}
-        onChange={(value) => setForm({ ...form, raw_material_id: Number(value) })}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-secondary rounded-xl p-6 w-[900px] mx-auto flex flex-col space-y-4 justify-center"
       >
-        <option value="">-- Sélectionner --</option>
-        {rawMaterials.map((raw) => (
-          <option key={raw.id} value={raw.id}>
-            {raw.name} ({raw.reference})
-          </option>
-        ))}
-      </Select>
+        <h1 className="size-smalltitle font-small-title text-center text-text underline decoration-primary decoration-2 underline-offset-6">
+          Création d'un nouvel ordre de fabrication
+        </h1>
 
-      <Input
-        type="number"
-        identification="quantite_matiere"
-        layout="row"
-        value={form.theoritical_raw_material_quantity ?? ""}
-        onChange={(value) =>
-          setForm({
-            ...form,
-            theoritical_raw_material_quantity:
-              value === "" ? null : Number(value),
-          })
-        }
-      >
-        Quantité de matière première (en kg)
-      </Input>
+        <div className="flex flex-row gap-2">
+          <label className="flex flex-row items-center gap-2 size-text font-family-[--font-family-text] text-text whitespace-nowrap">
+            Référence de l'ordre de fabrication :
+            <input
+              className="border border-primary rounded-lg px-4 py-1 w-24 text-center"
+              type="text"
+              disabled
+              value={`OF${actualYear}`}
+            />
+            <input
+              className="border border-primary rounded-lg px-4 py-1 flex-1"
+              type="number"
+              value={modifiableReference}
+              onChange={(e) => setModifiableReference(e.target.value.slice(0, 6))}
+            />
+          </label>
+        </div>
 
-      <Select
-        label="Choisir la machine"
-        layout="row"
-        value={form.machine_id ?? ""}
-        onChange={(value) => {
-          const selectedMachine = machines.find(
-            (machine) => machine.id === Number(value)
-          );
+        <Select
+          label="Choisir une matière première"
+          layout="row"
+          value={form.raw_material_id === null ? "" : String(form.raw_material_id)}
+          onChange={(value) => setForm({ ...form, raw_material_id: Number(value) })}
+        >
+          <option value="">-- Sélectionner --</option>
+          {rawMaterials.map((raw) => (
+            <option key={raw.id} value={raw.id}>
+              {raw.name} ({raw.reference})
+            </option>
+          ))}
+        </Select>
 
-          setForm({
-            ...form,
-            machine_id: selectedMachine?.id ?? null,
-            machine_theoritical_industrial_pace:
-              selectedMachine?.theoritical_industrial_pace ?? null,
-            measurement_unit: selectedMachine?.measurement_unit ?? "",
-          });
-        }}
-      >
-        <option value="">-- Sélectionner --</option>
-        {machines.map((machine) => (
-          <option key={machine.id} value={machine.id}>
-            {machine.machine_name}
-          </option>
-        ))}
-      </Select>
+        <Input
+          type="number"
+          identification="quantite_matiere"
+          layout="row"
+          value={form.theoritical_raw_material_quantity ?? ""}
+          onChange={(value) =>
+            setForm({
+              ...form,
+              theoritical_raw_material_quantity: value === "" ? null : Number(value),
+            })
+          }
+        >
+          Quantité de matière première (en kg)
+        </Input>
 
-      <Select
-        label="Choisir le produit final"
-        layout="row"
-        value={form.final_products_id ?? ""}
-        onChange={(value) => {
-          const selectedFinalProduct = finalProducts.find(
-            (product) => product.id === Number(value)
-          );
+        <Select
+          label="Choisir la machine"
+          layout="row"
+          value={form.machine_id ?? ""}
+          onChange={(value) => {
+            const selectedMachine = machines.find((m) => m.id === Number(value));
+            setForm({
+              ...form,
+              machine_id: selectedMachine?.id ?? null,
+              machine_theoritical_industrial_pace: selectedMachine?.theoritical_industrial_pace ?? null,
+              measurement_unit: selectedMachine?.measurement_unit ?? "",
+            });
+          }}
+        >
+          <option value="">-- Sélectionner --</option>
+          {machines.map((machine) => (
+            <option key={machine.id} value={machine.id}>
+              {machine.machine_name}
+            </option>
+          ))}
+        </Select>
 
-          setForm({
-            ...form,
-            final_products_id: selectedFinalProduct?.id ?? null,
-            final_product_quantity_per_product:
-              selectedFinalProduct?.quantity_of_product ?? null,
-          });
-        }}
-      >
-        <option value="">-- Sélectionner --</option>
-        {finalProducts.map((finalProduct) => (
-          <option key={finalProduct.id} value={finalProduct.id}>
-            {finalProduct.name}
-          </option>
-        ))}
-      </Select>
+        <Select
+          label="Choisir le produit final"
+          layout="row"
+          value={form.final_products_id ?? ""}
+          onChange={(value) => {
+            const selectedFinalProduct = finalProducts.find((p) => p.id === Number(value));
+            setForm({
+              ...form,
+              final_products_id: selectedFinalProduct?.id ?? null,
+              final_product_quantity_per_product: selectedFinalProduct?.quantity_of_product ?? null,
+            });
+          }}
+        >
+          <option value="">-- Sélectionner --</option>
+          {finalProducts.map((finalProduct) => (
+            <option key={finalProduct.id} value={finalProduct.id}>
+              {finalProduct.name}
+            </option>
+          ))}
+        </Select>
 
-      <Input
-        type="number"
-        identification="theoritical_final_product_quantity"
-        layout="row"
-        value={form.theoritical_final_product_quantity ?? ""}
-        disabled
-      >
-        Quantité de produit final fabriqué (calculée automatiquement)
-      </Input>
+        <Input
+          type="number"
+          identification="theoritical_final_product_quantity"
+          layout="row"
+          value={form.theoritical_final_product_quantity ?? ""}
+          disabled
+        >
+          Quantité de produit final fabriqué (calculée automatiquement)
+        </Input>
 
         <div className="flex flex-row gap-3">
           <Input
@@ -335,49 +316,29 @@ export default function ProductionOrderForm() {
             layout="row"
             value={form.end_time ?? ""}
             disabled
-            onChange={(value) => setForm({ ...form, end_time: value })}
           >
             Heure de fin (calculée automatiquement)
           </Input>
         </div>
-    
-      {conflict && (
-    <p className="text-red-600 font-bold">
-        ⚠️ Cette machine est déjà occupée pendant cette plage horaire !
-    </p>
-)}
 
-      <div className="flex space-x-2">
-        <Button disabled={conflict} type="submit">Ajouter l'ordre de fabrication</Button>
-        <Button
-          type="reset"
-          onClick={() =>
-            setForm({
-              production_order_reference: "",
+        {conflict && (
+          <p className="text-red-600 font-bold">
+            ⚠️ Cette machine est déjà occupée pendant cette plage horaire !
+          </p>
+        )}
 
-              raw_material_id: null,
-              theoritical_raw_material_quantity: null,
-
-              machine_id: null,
-              machine_theoritical_industrial_pace: null,
-              measurement_unit: "",
-
-              final_products_id: null,
-              final_product_quantity_per_product: null,
-
-              theoritical_final_product_quantity: null,
-
-              start_time: "",
-              end_time: "",
-            })
-          }
-        >
-          Annuler
-        </Button>
-      </div>
-    </form>
+        <div className="flex space-x-2">
+          <Button disabled={conflict} type="submit">
+            Ajouter l'ordre de fabrication
+          </Button>
+          <Button
+            type="reset"
+            onClick={() => setForm(initialForm)}
+          >
+            Annuler
+          </Button>
+        </div>
+      </form>
     </>
   );
 }
-
-
