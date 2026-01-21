@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate} from "react-router-dom";
-import { Outlet } from "react-router-dom";
 import { useProductionStore } from "../stores/useProductionStore";
-import Header from "../components/Header";
-import MenuUser from "../components/MenuUser";
 import ProductionOrderCard from "../molecules/ProductionOrderCard";
 import getProductionOrder from "../api/getProductionOrder";
 import sendDate from "../api/sendDate";
