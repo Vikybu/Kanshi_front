@@ -1,9 +1,11 @@
 interface Props {
   children?: React.ReactNode;
-  type?: "submit" | "reset";
+  type?: "submit" | "reset" | "button";
   disabled?: boolean;
   showButton?: boolean;
   onClick?: () => void;
+  className?: string;
+  variant?: "primary" | "outline" | "danger";
 }
 
 export const Button = ({
@@ -12,6 +14,7 @@ export const Button = ({
   disabled = false,
   showButton = true,
   onClick,
+  className = "",
 }: Props) => {
   if (!showButton) return null;
 
@@ -21,13 +24,11 @@ export const Button = ({
       disabled={disabled}
       onClick={onClick}
       className={`
-        bg-primary size-text text-white font-medium px-6 py-2 rounded-lg
+        ${className} 
+        bg-primary text-secondary font-small-title rounded-lg 
+        px-6 py-2 text-l
         transition duration-200
-        ${
-          disabled
-            ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-primary/90 cursor-pointer"
-        }
+        ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-primary/90 cursor-pointer"}
       `}
     >
       {children}
@@ -35,4 +36,4 @@ export const Button = ({
   );
 };
 
-export default Button
+export default Button;

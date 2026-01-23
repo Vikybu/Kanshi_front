@@ -4,6 +4,8 @@ import { useProductionStore } from "../stores/useProductionStore";
 import ProductionOrderCard from "../molecules/ProductionOrderCard";
 import getProductionOrder from "../api/getProductionOrder";
 import sendDate from "../api/sendDate";
+import Header from "../components/Header";
+import MenuUser from "../components/MenuUser";
 
 interface Machine {
     id: number
@@ -41,20 +43,30 @@ export default function UserPage(){
         fetchData()
     }, [])
 
-    function getDateAndHour(id: number){
-        const status = "inProduction"
-        const now = new Date().toISOString().slice(0, 19).replace("T", " ");
-        sendDate(now, id, status);
-    }
+    async function getDateAndHour(id: number) {
+    const status = "inProduction";
 
-    function goToTheProduction(id: number){
-        getDateAndHour(id)
+    const now = new Date();
+    const formattedNow = now.getFullYear() + '-' +
+                         String(now.getMonth() + 1).padStart(2, '0') + '-' +
+                         String(now.getDate()).padStart(2, '0') + ' ' +
+                         String(now.getHours()).padStart(2, '0') + ':' +
+                         String(now.getMinutes()).padStart(2, '0') + ':' +
+                         String(now.getSeconds()).padStart(2, '0');
+
+    await sendDate(formattedNow, id, status);
+}
+
+    async function goToTheProduction(id: number){
+        await getDateAndHour(id);
         useProductionStore.getState().setActiveProduction(id.toString());
         navigate(`/user/production/${id}`);
     }
 
       return (
-        <div className="flex justify-center py-10">
+        <div className="flex flex-col justify-center py-10">
+            <Header />
+            <MenuUser />
             <div className="w-full max-w-6xl flex flex-row gap-4">
                 {productionOrders.map((productionOrder) => (
                     <ProductionOrderCard

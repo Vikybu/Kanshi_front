@@ -11,7 +11,6 @@ import MachineList from "./pages/MachineList.tsx";
 import ProductionPage from "./pages/ProductionPage.tsx";
 import ProtectedRoute from "./pages/ProtectedRoute.tsx";
 import NoProduction from "./pages/NoProduction.tsx";
-import UserLayout from "./pages/UserLayout.tsx";
 
 export default function App() {
   const { user } = useUserStore();
@@ -22,7 +21,7 @@ export default function App() {
         <Route path="/" element={<LoginPage />} />
 
         <Route element={<ProtectedRoute role="operator" />}>
-          <Route path="/user" element={<UserLayout />}>
+          <Route path="/user">
             <Route index element={<UserPage />} />
             <Route path="production/:id" element={<ProductionPage />} />
             <Route path="production/none" element={<NoProduction />} />

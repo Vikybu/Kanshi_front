@@ -43,6 +43,7 @@ interface FormState {
   end_time: string;
   real_start_time: string | null;
   real_end_time: string | null;
+  duration_time?: number,
 }
 
 export default function ProductionOrderForm() {
@@ -64,6 +65,7 @@ export default function ProductionOrderForm() {
     end_time: "",
     real_start_time: null,
     real_end_time: null,
+    duration_time: undefined,
   };
 
   const [form, setForm] = useState<FormState>(initialForm);
@@ -127,6 +129,7 @@ export default function ProductionOrderForm() {
         ...prev,
         theoritical_final_product_quantity: data.theoritical_final_product_quantity,
         end_time: convertToDatetimeLocal(data.end_time),
+        duration_time: data.duration_minutes,
       }));
     };
     simulate();
@@ -169,6 +172,7 @@ export default function ProductionOrderForm() {
       end_time: toLaravelDateTime(form.end_time),
       real_start_time: null,
       real_end_time: null,
+      duration_time: form.duration_time,
       status: "plannified",
       theoritical_final_product_quantity: Number(form.theoritical_final_product_quantity),
       actual_final_product_quantity: 0,
@@ -181,6 +185,7 @@ export default function ProductionOrderForm() {
     setForm(initialForm);
     setModifiableReference("");
   };
+    console.log("Duration in form:", form.duration_time);
 
   return (
     <>
@@ -318,6 +323,16 @@ export default function ProductionOrderForm() {
             disabled
           >
             Heure de fin (calculée automatiquement)
+          </Input>
+
+          <Input
+            type="number"
+            identification="duration_time"
+            layout="row"
+            value={form.duration_time !== undefined ? form.duration_time : ""}
+            disabled
+          >
+            Durée (minutes)
           </Input>
         </div>
 
