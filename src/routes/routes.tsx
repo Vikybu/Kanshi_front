@@ -4,6 +4,8 @@ import UserPage from "../pages/UserPage";
 import MachinePage from "../pages/MachineList";
 import CreateMachinePage from "../pages/CreateMachinePage";
 import FabricationOrderPage from "../pages/FabricationOrderPage";
+import ProductionPage from "../pages/ProductionPage";
+import NoProduction from "../pages/NoProduction";
 
 const routes = [
   {
@@ -28,9 +30,8 @@ const routes = [
     element: <UserPage />,
     roles: ["operator"],
     children: [
-      {path: 'of', element: <MachinePage />, children : [
-        {path: 'production', element: <CreateMachinePage />}
-      ]}
+      {path: 'production/:id', element: <ProductionPage />},
+      {path: 'production/none', element: <NoProduction />},
     ]
   },
 ];

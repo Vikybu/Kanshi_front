@@ -39,7 +39,7 @@ export default function FabricationOrderPage (){
     }, [])
 
     return (
-        <div className="bg-secondary rounded-xl shadow-md p-6 flex items-center justify-between">
+        <div className="bg-secondary rounded-xl shadow-md p-6 flex flex-col items-center justify-between">
             <div className="flex flex-col justify-center align-items gap-3">
                 {productionOrders.map(productionOrder => (
                 <ProductionOrderCard 

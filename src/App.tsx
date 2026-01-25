@@ -8,14 +8,9 @@ import Machine from "./pages/Machine.tsx";
 import CreateMachinePage from "./pages/CreateMachinePage.tsx";
 import FabricationOrderPage from "./pages/FabricationOrderPage.tsx";
 import MachineList from "./pages/MachineList.tsx";
-
-function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
-  const { user } = useUserStore();
-
-  if (!user) return <Navigate to="/" replace />; 
-  if (role && user.authorization !== role) return <Navigate to="/" replace />; 
-  return children;
-}
+import ProductionPage from "./pages/ProductionPage.tsx";
+import ProtectedRoute from "./pages/ProtectedRoute.tsx";
+import NoProduction from "./pages/NoProduction.tsx";
 
 export default function App() {
   const { user } = useUserStore();
@@ -25,31 +20,22 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
 
-        <Route
-          path="/user"
-          element={
-            <ProtectedRoute role="operator">
-              <UserPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute role="admin">
-              <AdminPage />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="machine" element={<Machine />}>
-            <Route index element={<MachineList />} />
-            <Route path="create" element={<CreateMachinePage />} />
+        <Route element={<ProtectedRoute role="operator" />}>
+          <Route path="/user">
+            <Route index element={<UserPage />} />
+            <Route path="production/:id" element={<ProductionPage />} />
+            <Route path="production/none" element={<NoProduction />} />
           </Route>
+        </Route>
 
-          <Route path="of" element={<FabricationOrderPage />}>
+        <Route element={<ProtectedRoute role="admin" />}>
+          <Route path="/admin" element={<AdminPage />}>
+            <Route path="machine" element={<Machine />}>
+              <Route index element={<MachineList />} />
+              <Route path="create" element={<CreateMachinePage />} />
+            </Route>
+            <Route path="of" element={<FabricationOrderPage />} />
           </Route>
-
         </Route>
 
         <Route
