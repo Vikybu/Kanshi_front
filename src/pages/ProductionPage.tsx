@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import getOneProductionOrder from "../api/getOneProductionOrder";
 import { useEffect, useState } from "react";
 //import Button from "../atoms/Button";
-import sendDate from "../api/sendDate";
+//import sendDate from "../api/sendDate";
 import { RadialChart } from "../atoms/RadialChart";
 import { TrsGauge } from "@/atoms/TrsGauge";
 import HourCompo from "@/molecules/HourCompo";
@@ -80,7 +80,7 @@ export default function ProductionPage(){
             const status = "onHold"
             const now = new Date().toISOString().slice(0, 19).replace("T", " ");
             sendDate(now, id, status);
-        } */
+        }  */
 
     return(
         <div className=" flex flex-col gap-7 min-h-screen bg-secondary">

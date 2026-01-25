@@ -14,25 +14,6 @@ export default function HourCompo() {
     const [hours, setHours] = useState<HourProps | null>(null);
     const [time, setTime] = useState(new Date());
 
-    function CalculationEndTime(startTime: string, durationTime: number): string {
-        const startDate = new Date(startTime);
-
-        if (isNaN(startDate.getTime())) {
-            return "Date invalide";
-        }
-
-        startDate.setMinutes(startDate.getMinutes() + durationTime);
-
-        const end_time = startDate.getFullYear() + '-' +
-                         String(startDate.getMonth() + 1).padStart(2, '0') + '-' +
-                         String(startDate.getDate()).padStart(2, '0') + ' ' +
-                         String(startDate.getHours()).padStart(2, '0') + ':' +
-                         String(startDate.getMinutes()).padStart(2, '0') + ':' +
-                         String(startDate.getSeconds()).padStart(2, '0');
-
-        return end_time;
-    }
-
     useEffect(() => {
         const timer = setInterval(() => setTime(new Date()), 1000);
         return () => clearInterval(timer);
