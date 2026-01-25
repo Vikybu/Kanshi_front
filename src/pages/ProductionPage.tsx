@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
 import getOneProductionOrder from "../api/getOneProductionOrder";
 import { useEffect, useState } from "react";
-import Button from "../atoms/Button";
+//import Button from "../atoms/Button";
 import sendDate from "../api/sendDate";
-import { RadialChart } from "@/atoms/radialChart";
+import { RadialChart } from "../atoms/RadialChart";
 import { TrsGauge } from "@/atoms/TrsGauge";
 import HourCompo from "@/molecules/HourCompo";
 
@@ -37,8 +37,8 @@ export default function ProductionPage(){
     const { id } = useParams<{ id: string }>();
 
     const [productionOrder, setProductionOrder] = useState<ProductionOrder | null>(null);
-    const [showModalEndProduction, setShowModalEndProduction] = useState(false);
-    const [showModalQuantity, setShowModalQuantity] = useState(false);
+    //const [showModalEndProduction, setShowModalEndProduction] = useState(false);
+    //const [showModalQuantity, setShowModalQuantity] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -54,9 +54,9 @@ export default function ProductionPage(){
         return <p>Aucune donnée trouvée</p>;
     }
 
-    const startTime = new Date(productionOrder.real_start_time)
+    //const startTime = new Date(productionOrder.real_start_time)
     
-    function translateStatus(status: string){
+    /* function translateStatus(status: string){
         let status_fr = ""
         if(status === "inProduction"){
             status_fr = 'En production'
@@ -68,9 +68,9 @@ export default function ProductionPage(){
             status_fr = "Pause"
         }
         return status_fr
-    }
+    } */
 
-        function getDateAndHourEndProduction(id: number){
+/*         function getDateAndHourEndProduction(id: number){
             const status = "endProduction"
             const now = new Date().toISOString().slice(0, 19).replace("T", " ");
             sendDate(now, id, status);
@@ -80,7 +80,7 @@ export default function ProductionPage(){
             const status = "onHold"
             const now = new Date().toISOString().slice(0, 19).replace("T", " ");
             sendDate(now, id, status);
-        }
+        } */
 
     return(
         <div className=" flex flex-col gap-7 min-h-screen bg-secondary">
