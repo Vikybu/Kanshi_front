@@ -1,22 +1,20 @@
-export default async function createProductionOrder(payload: any) {
-  console.log("Payload FINAL envoyé à l'API :", payload);
-
-  const response = await fetch( "http://localhost:8000/api/admin/productionOrder/create",{
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(payload),
-    }
-  );
+export default async function createNewDowntime(payload: {
+  machine_id: number;
+  downtime_reason_id: number;
+  started_at: string;
+  ended_at: string;
+}) {
+  const response = await fetch("/api/machine-downtimes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
   if (!response.ok) {
-    const error = await response.json();
-    console.error("Erreur backend :", error);
-    throw new Error("Erreur lors de l'appel API");
+    throw new Error("Erreur lors de la création de l'arrêt");
   }
 
-  const data = await response.json();
-  return data;
+  return response.json();
 }
