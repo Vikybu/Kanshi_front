@@ -1,99 +1,159 @@
 import { useParams } from "react-router-dom";
-import getOneProductionOrder from "../api/getOneProductionOrder";
 import { useEffect, useState } from "react";
-//import Button from "../atoms/Button";
-//import sendDate from "../api/sendDate";
-import { RadialChart } from "../atoms/RadialChart";
+
+import getOneProductionOrder from "../api/getOneProductionOrder";
+//import getTRS from "../api/getTRS";
+
+import RadialChart from "../atoms/RadialChart";
 import { TrsGauge } from "@/atoms/TrsGauge";
 import HourCompo from "@/molecules/HourCompo";
 
-interface Machine{
-    id: number,
-    machine_name: string
+/* ===== Interfaces ===== */
+
+interface Machine {
+  id: number;
+  machine_name: string;
+  theoritical_industrial_pace: number;
 }
 
 interface RawMaterial {
-    id: number,
-    name: string,
-    measurement_unit: string
+  id: number;
+  name: string;
+  measurement_unit: string;
 }
 
 interface ProductionOrder {
-    id: number,
-    production_order_reference : string,
-    real_start_time : string,
-    theoritical_raw_material_quantity: number,
-    actual_raw_material_quantity: number,
-    start_time: string, 
-    end_time: string,
-    theoritical_final_product_quantity: number,
-    actual_final_product_quantity: number,
-    status: string,
-    machines: Machine[],
-    raw_materials: RawMaterial[],
+  id: number;
+  production_order_reference: string;
+  real_start_time: string;
+  theoritical_raw_material_quantity: number;
+  actual_raw_material_quantity: number;
+  start_time: string;
+  end_time: string;
+  theoritical_final_product_quantity: number;
+  actual_final_product_quantity: number;
+  status: string;
+  machines: Machine[];
+  raw_materials: RawMaterial[];
 }
 
-export default function ProductionPage(){
-    const { id } = useParams<{ id: string }>();
+/* ===== Component ===== */
 
-    const [productionOrder, setProductionOrder] = useState<ProductionOrder | null>(null);
-    //const [showModalEndProduction, setShowModalEndProduction] = useState(false);
-    //const [showModalQuantity, setShowModalQuantity] = useState(false);
+export default function ProductionPage() {
+  const { id } = useParams<{ id: string }>();
 
-    useEffect(() => {
-        if (!id) return;
-        const fetchData = async () => {
-            const data = await getOneProductionOrder(Number(id));
-            console.log("🚀 ~ fetchData ~ data:", data)
-            setProductionOrder(data);
-        }
-        fetchData()
-        }, [])
+  const [productionOrder, setProductionOrder] = useState<ProductionOrder | null>(null);
+
+  const [timeData, setTimeData] = useState<{start: string;} | null>(null);
+
+  const [quantity, setQuantity] = useState<any | null>(null);
+  const [trs, setTrs] = useState<number | null>(null);
+
+  /* ===== Fetch Production Order ===== */
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchData = async () => {
+      const data = await getOneProductionOrder(Number(id));
+      setProductionOrder(data);
+    };
+
+    fetchData();
+  }, [id]);
+
+  /* ===== Calcul TRS ===== */
+
+  /* useEffect(() => {
+    fetchTRS();
+  }, [timeData, quantity, productionOrder]);
+
+  const fetchTRS = async () => {
+    if (!timeData || quantity === null || !productionOrder) return;
+
     
-    if (!productionOrder) {
-        return <p>Aucune donnée trouvée</p>;
+    if (!machinePace) {
+      console.warn("Cadence machine introuvable");
+      return;
     }
 
-    //const startTime = new Date(productionOrder.real_start_time)
-    
-    /* function translateStatus(status: string){
-        let status_fr = ""
-        if(status === "inProduction"){
-            status_fr = 'En production'
-        } else if(status === "plannified"){
-            status_fr = 'Plannifié'
-        } else if(status === "stopped"){
-            status_fr = "En arrêt"
-        } else if(status === "onHold"){
-            status_fr = "Pause"
-        }
-        return status_fr
-    } */
+    try {
+      const response = await getTRS({
+        real_start_time: timeData.start,
+        actual_time: timeData.end,
+        quantity_produced: quantity,
+        machine_theoritical_industrial_pace: machinePace,
+      });
+      console.log(typeof(response))
+      setTrs(response.trs);
+    } catch (error) {
+      console.error("Erreur calcul TRS", error);
+    }
+  }; */
 
-/*         function getDateAndHourEndProduction(id: number){
-            const status = "endProduction"
-            const now = new Date().toISOString().slice(0, 19).replace("T", " ");
-            sendDate(now, id, status);
-        }
 
-        function getDateAndHourPause(id: number){
-            const status = "onHold"
-            const now = new Date().toISOString().slice(0, 19).replace("T", " ");
-            sendDate(now, id, status);
-        }  */
+  let machinePace = 0;
 
-    return(
-        <div className=" flex flex-col gap-7 min-h-screen bg-secondary">
-            <HourCompo />
-            <div className="flex flex-row">
-                <div className="flex-1">
-                    <RadialChart />
-                </div>
-                <div className="flex-1">
-                    <TrsGauge trs={75} />
-                </div>
-            </div>
+  if (productionOrder != null) { 
+     machinePace  = productionOrder.machines[0]?.theoritical_industrial_pace;
+  }
 
-        </div> 
-    )
+  useEffect(() => { calculateTrs(); }, [timeData, quantity, productionOrder]);
+
+  function calculTRS(startTime: Date,nowTime: Date, productQuantity: number, paceMachine: number){
+    let duration = diff(nowTime, startTime)
+    let theoretical_total_quantity = (duration * paceMachine);
+    let TRS = Math.round((productQuantity / theoretical_total_quantity)*100);
+    return TRS
+  }
+
+  const calculateTrs = async () => {
+    if (!timeData || quantity === null || !productionOrder) return;
+
+    if (!machinePace) {
+      console.warn("Cadence machine introuvable");
+      return;
+    }
+
+    try {
+      let superTRSdeOUF = calculTRS(new Date(timeData.start), new Date(), quantity, machinePace)
+      setTrs(superTRSdeOUF);
+      console.log(superTRSdeOUF)
+    } catch (error) {
+      console.error("Erreur calcul TRS", error);
+    }
+  };
+
+function diff(now: Date, start: Date){
+    let diff =(now.getTime() - start.getTime()) / 1000;
+  // Convert the difference from seconds to minutes
+  diff /= 60;
+  // Return the absolute value of the rounded difference in minutes
+  return Math.abs(Math.round(diff));
+}
+
+  /* ===== Render ===== */
+
+  if (!productionOrder) {
+    return <p>Chargement…</p>;
+  }
+
+  return (
+    <div className="flex flex-col gap-7 min-h-screen bg-secondary">
+      {/* Temps */}
+      <HourCompo onTimeChange={setTimeData} />
+
+      <div className="flex flex-row">
+        {/* Quantité */}
+        <div className="flex-1">
+          <RadialChart onQuantityChange={setQuantity} />
+        </div>
+
+        {/* TRS */}
+        <div className="flex-1">
+          <TrsGauge trs={trs} />
+        </div>
+      </div>
+    </div>
+  );
 }
