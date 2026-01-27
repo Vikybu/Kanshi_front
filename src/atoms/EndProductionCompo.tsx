@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import sendEndProduction from "../api/sendEndProduction";
 import { useUserStore } from "../stores/userStore";
 import { useProductionStore  } from "../stores/useProductionStore";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 interface EndProductionCompoProps {
   productionId: number;
