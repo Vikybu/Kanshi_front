@@ -12,8 +12,8 @@ type TrsGaugeProps = {
 };
 
 export function TrsGauge({ trs }: TrsGaugeProps) {
-  if (trs === null) {
-    return <p className="text-center">Calcul du TRS…</p>;
+  if (trs === null || isNaN(trs)) {
+    trs = 0
   }
 
   const rayon = 90;
@@ -28,11 +28,11 @@ export function TrsGauge({ trs }: TrsGaugeProps) {
   return (
     <Card>
       <CardHeader className="items-center font-text">
-        <CardTitle>Suivi du TRS</CardTitle>
+        <CardTitle className="items-center font-text font-bold text-base">Suivi du TRS</CardTitle>
       </CardHeader>
 
       <CardContent className="flex justify-center">
-        <svg viewBox="0 0 200 140" className="w-64">
+        <svg viewBox="0 0 200 130" className="w-64">
           <path
             d="M10 100 A90 90 0 0 1 190 100"
             fill="none"

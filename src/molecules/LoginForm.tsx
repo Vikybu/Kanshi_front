@@ -26,7 +26,7 @@ const loginForm = ({
         }}
         className="bg-secondary rounded-xl p-3 w-full max-w-md flex flex-col space-y-3">
             <div ></div>
-              <h1 className="text-2xl font-family-[--font-family-small-title] text-center text-text mb-4">Connexion à votre compte</h1>
+              <h1 className="text-2xl font-text text-center text-text mb-4">Connexion à votre compte</h1>
               <Input type="text" identification="registration_number" value={registration_number} onChange={onRegistration_numberChange}>Numéro de matricule</Input>
               <Input type="password" identification="password" value={password} onChange={onPasswordChange}>Mot de passe</Input>
               <Button type="submit" >Se connecter</Button>

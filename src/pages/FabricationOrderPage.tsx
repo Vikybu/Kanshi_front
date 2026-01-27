@@ -1,65 +1,68 @@
 import { useEffect, useState } from "react";
-import ProductionOrderCard from "../molecules/ProductionOrderCard"
-import ProductionOrderForm  from "../molecules/ProductionOrderForm"
+import ProductionOrderCard from "../molecules/ProductionOrderCard";
+import ProductionOrderForm from "../molecules/ProductionOrderForm";
 import getProductionOrder from "../api/getProductionOrder";
 
 interface Machine {
-    id: number
-    machine_name: string
+  id: number;
+  machine_name: string;
 }
 
 interface RawMaterial {
-    id: number
-    name: string
-    measurement_unit: string
+  id: number;
+  name: string;
+  measurement_unit: string;
 }
 
 interface ProductionOrder {
-    id: number,
-    production_order_reference: string,
-    theoritical_raw_material_quantity: number,
-    start_time: string,
-    end_time: string,
-    theoritical_final_product_quantity: number,
-    raw_materials: RawMaterial[],
-    machines: Machine[],
-    status: string
+  id: number;
+  production_order_reference: string;
+  theoritical_raw_material_quantity: number;
+  start_time: string;
+  end_time: string;
+  theoritical_final_product_quantity: number;
+  raw_materials: RawMaterial[];
+  machines: Machine[];
+  status: string;
 }
 
-export default function FabricationOrderPage (){
+export default function FabricationOrderPage() {
+  const [productionOrders, setProductionOrders] = useState<ProductionOrder[]>([]);
 
-    const [productionOrders, setProductionOrders] = useState<ProductionOrder[]>([])
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getProductionOrder();
+      setProductionOrders(data);
+    };
+    fetchData();
+  }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-        const data = await getProductionOrder()
-        setProductionOrders(data)
-        }
-        fetchData()
-    }, [])
+  // Récupérer uniquement le dernier OF
+  const lastOF = productionOrders.length > 0 ? productionOrders[productionOrders.length - 1] : null;
 
-    return (
-        <div className="bg-secondary rounded-xl shadow-md p-6 flex flex-col items-center justify-between">
-            <div className="flex flex-col justify-center align-items gap-3">
-                {productionOrders.map(productionOrder => (
-                <ProductionOrderCard 
-                key={productionOrder.id}
-                id={productionOrder.id}
-                machine_name={productionOrder.machines[0]?.machine_name ?? "—"}
-                production_order_reference={productionOrder.production_order_reference}
-                theoritical_raw_material_quantity={productionOrder.theoritical_raw_material_quantity}
-                start_time={productionOrder.start_time}
-                theoritical_final_product_quantity={productionOrder.theoritical_final_product_quantity}
-                end_time={productionOrder.end_time}
-                name={productionOrder.raw_materials?.[0]?.name ?? "—"}
-                measurement_unit={productionOrder.raw_materials?.[0]?.measurement_unit ?? "—"}
-                status={productionOrder.status}
-                showButton={false}
-                />
-                ))}
-                
-            </div>
-            <ProductionOrderForm  />
-        </div>
-    )
+  return (
+    <div className="bg-primary rounded shadow-md flex flex-col items-center justify-between gap-2 pt-4 mt-3">
+      <div className="flex flex-col justify-center items-center gap-2">
+        {lastOF && (
+          <ProductionOrderCard
+            key={lastOF.id}
+            id={lastOF.id}
+            machine_name={lastOF.machines[0]?.machine_name ?? "—"}
+            production_order_reference={lastOF.production_order_reference}
+            theoritical_raw_material_quantity={lastOF.theoritical_raw_material_quantity}
+            start_time={lastOF.start_time}
+            theoritical_final_product_quantity={lastOF.theoritical_final_product_quantity}
+            end_time={lastOF.end_time}
+            name={lastOF.raw_materials?.[0]?.name ?? "—"}
+            measurement_unit={lastOF.raw_materials?.[0]?.measurement_unit ?? "—"}
+            status={lastOF.status}
+            showButton={false}
+            direction="row"
+          />
+        )}
+      </div>
+
+      <ProductionOrderForm />
+    </div>
+  );
 }

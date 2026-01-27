@@ -43,7 +43,7 @@ interface FormState {
   end_time: string;
   real_start_time: string | null;
   real_end_time: string | null;
-  duration_time?: number,
+  duration_time?: number;
 }
 
 export default function ProductionOrderForm() {
@@ -73,7 +73,7 @@ export default function ProductionOrderForm() {
   const [machines, setMachines] = useState<Machine[]>([]);
   const [finalProducts, setFinalProducts] = useState<FinalProduct[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [conflict, setConflict] = useState(false);
+  const [conflictStatus, setConflictStatus] = useState<"loading" | "ok" | "conflict" | null>(null);
   const [modifiableReference, setModifiableReference] = useState("");
 
   const convertToDatetimeLocal = (dateString: string) => {
@@ -91,6 +91,7 @@ export default function ProductionOrderForm() {
     return d.toISOString().slice(0, 19).replace("T", " ");
   };
 
+  // Récupération des données pour les selects
   useEffect(() => {
     const fetchData = async () => {
       setRawMaterials(await getRawMaterial());
@@ -144,22 +145,28 @@ export default function ProductionOrderForm() {
   useEffect(() => {
     const check = async () => {
       if (!form.machine_id || !form.start_time || !form.end_time) {
-        setConflict(false);
+        setConflictStatus(null);
         return;
       }
+
+      setConflictStatus("loading"); // En cours de vérification
 
       const data = await checkConflits(
         form.machine_id,
         toLaravelDateTime(form.start_time),
         toLaravelDateTime(form.end_time)
       );
-      setConflict(data.conflict);
+
+      setConflictStatus(data.conflict ? "conflict" : "ok");
     };
+
     check();
   }, [form.machine_id, form.start_time, form.end_time]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (conflictStatus === "conflict" || conflictStatus === "loading") return;
 
     const payload = {
       production_order_reference: `OF${actualYear}${modifiableReference}`,
@@ -185,16 +192,9 @@ export default function ProductionOrderForm() {
     setForm(initialForm);
     setModifiableReference("");
   };
-    console.log("Duration in form:", form.duration_time);
 
   return (
     <>
-      {successMessage && (
-        <div className="bg-green-100 text-green-800 border border-green-300 rounded-lg px-4 py-2">
-          {successMessage}
-        </div>
-      )}
-
       <form
         onSubmit={handleSubmit}
         className="bg-secondary rounded-xl p-6 w-[900px] mx-auto flex flex-col space-y-4 justify-center"
@@ -203,8 +203,9 @@ export default function ProductionOrderForm() {
           Création d'un nouvel ordre de fabrication
         </h1>
 
+        {/* Référence OF */}
         <div className="flex flex-row gap-2">
-          <label className="flex flex-row items-center gap-2 size-text font-family-[--font-family-text] text-text whitespace-nowrap">
+          <label className="flex flex-row items-center gap-2 font-small-title text-base text-text whitespace-nowrap">
             Référence de l'ordre de fabrication :
             <input
               className="border border-primary rounded-lg px-4 py-1 w-24 text-center"
@@ -221,6 +222,7 @@ export default function ProductionOrderForm() {
           </label>
         </div>
 
+        {/* Select matière première */}
         <Select
           label="Choisir une matière première"
           layout="row"
@@ -235,6 +237,7 @@ export default function ProductionOrderForm() {
           ))}
         </Select>
 
+        {/* Quantité matière première */}
         <Input
           type="number"
           identification="quantite_matiere"
@@ -250,6 +253,7 @@ export default function ProductionOrderForm() {
           Quantité de matière première (en kg)
         </Input>
 
+        {/* Select machine */}
         <Select
           label="Choisir la machine"
           layout="row"
@@ -272,6 +276,7 @@ export default function ProductionOrderForm() {
           ))}
         </Select>
 
+        {/* Select produit final */}
         <Select
           label="Choisir le produit final"
           layout="row"
@@ -293,6 +298,7 @@ export default function ProductionOrderForm() {
           ))}
         </Select>
 
+        {/* Quantité finale calculée */}
         <Input
           type="number"
           identification="theoritical_final_product_quantity"
@@ -303,6 +309,7 @@ export default function ProductionOrderForm() {
           Quantité de produit final fabriqué (calculée automatiquement)
         </Input>
 
+        {/* Heures de début/fin */}
         <div className="flex flex-row gap-3">
           <Input
             type="datetime-local"
@@ -324,26 +331,27 @@ export default function ProductionOrderForm() {
           >
             Heure de fin (calculée automatiquement)
           </Input>
-
-          <Input
-            type="number"
-            identification="duration_time"
-            layout="row"
-            value={form.duration_time !== undefined ? form.duration_time : ""}
-            disabled
-          >
-            Durée (minutes)
-          </Input>
         </div>
 
-        {conflict && (
+        {/* Messages de conflit */}
+        {conflictStatus === "loading" && (
+          <p className="text-blue-600 font-bold">🔄 Vérification en cours…</p>
+        )}
+        {conflictStatus === "ok" && (
+          <p className="text-green-600 font-bold">✅ Pas de conflit, la machine est disponible</p>
+        )}
+        {conflictStatus === "conflict" && (
           <p className="text-red-600 font-bold">
             ⚠️ Cette machine est déjà occupée pendant cette plage horaire !
           </p>
         )}
 
-        <div className="flex space-x-2">
-          <Button disabled={conflict} type="submit">
+        {/* Boutons + message de succès */}
+        <div className="flex items-center space-x-2">
+          <Button
+            disabled={conflictStatus === "conflict" || conflictStatus === "loading"}
+            type="submit"
+          >
             Ajouter l'ordre de fabrication
           </Button>
           <Button
@@ -352,6 +360,12 @@ export default function ProductionOrderForm() {
           >
             Annuler
           </Button>
+
+          {successMessage && (
+            <div className="bg-green-100 text-green-800 border border-green-300 rounded-lg px-4 py-2 ml-4">
+              {successMessage}
+            </div>
+          )}
         </div>
       </form>
     </>

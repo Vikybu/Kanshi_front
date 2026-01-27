@@ -20,13 +20,13 @@ export default function MachineList() {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center bg-primary items-center gap-3 p-2">
+    <div className="flex flex-col justify-center bg-primary items-center gap-3 p-2 my-2">
       <button className="bg-secondary text-text font-text px-6 py-2 rounded-lg hover:bg-secondary/90 transition duration-200" 
               onClick={() => navigate("/admin/machine/create")}>
               Ajouter une machine
       </button>
       
-      <h1 className="text-secondary font-big-title">Listes de machines</h1>
+      <h1 className="text-secondary text-2xl font-text">Listes de machines</h1>
       <div className="flex flex-row gap-3">
         {machines.map(machine => (
           <MachineCard 

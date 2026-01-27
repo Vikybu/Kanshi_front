@@ -1,4 +1,4 @@
-export default async function sendEndProduction(end_start_time: string, id: number, status: string) {
+export default async function sendEndProduction(real_end_time: string, id: number, status: string, user_id: number) {
   try {
     const response = await fetch("http://localhost:8000/api/user/fo/stop", {
       method: 'PUT',
@@ -6,7 +6,7 @@ export default async function sendEndProduction(end_start_time: string, id: numb
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify({ end_start_time, id, status })
+      body: JSON.stringify({ real_end_time, id, status, user_id })
     });
 
     if (!response.ok) {

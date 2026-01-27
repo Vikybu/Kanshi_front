@@ -66,16 +66,16 @@ export default function RadialChart({ onQuantityChange }: RadialChartProps) {
   return (
     <Card className="max-w-[600px] mx-auto">
       <CardHeader className="pb-2">
-        <CardTitle className="font-text text-center text-lg">Avancement production</CardTitle>
+        <CardTitle className="font-text text-center text-base font-bold">Avancement production</CardTitle>
       </CardHeader>
 
-      <CardContent className="flex items-center gap-4">
+      <CardContent className="flex items-center gap-3">
         <div className="flex-1">
           <ChartContainer config={chartConfig} className="aspect-square max-h-[180px]">
             <RadialBarChart
               data={chartData}
-              startAngle={0}
-              endAngle={percentage * 3.6}
+              startAngle={180}
+              endAngle={180 - percentage * 3.6}
               innerRadius={60}
               outerRadius={85}
             >

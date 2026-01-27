@@ -44,7 +44,7 @@ export const Input = ({
       {children && (
         <label
           htmlFor={identification}
-          className="size-text font-text whitespace-nowrap"
+          className="font-small-title text-base whitespace-nowrap"
         >
           {children}
         </label>
@@ -61,6 +61,7 @@ export const Input = ({
         onChange={onChange ? (e) => onChange(e.target.value) : undefined}
         className={`
           border border-primary rounded-lg
+          font-small-title text-base
           focus:outline-none focus:ring-2 focus:ring-primary
           disabled:opacity-50 disabled:cursor-not-allowed
           ${sizeClasses[size]}
