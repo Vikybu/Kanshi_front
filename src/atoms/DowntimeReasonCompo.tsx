@@ -4,7 +4,6 @@ import getDowntimeReason from "../api/getDowntimeReason";
 import createNewDowntimeMachine from "../api/createNewDowntimeMachine";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-
 interface DowntimeReason {
   id: number;
   name: string;
@@ -93,8 +92,8 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
     <div className="flex gap-6 w-full">
 
       <Card className="w-80">
-        <CardHeader className="items-center font-text">
-          <CardTitle>Déclaration d'un arrêt</CardTitle>
+        <CardHeader className="items-center font-text font-bold">
+          <CardTitle className="items-center font-text font-bold">Déclaration d'un arrêt</CardTitle>
         </CardHeader>
         <CardContent className="flex justify-center gap-3">
           <Button onClick={() => setSelectedType("planned")}>

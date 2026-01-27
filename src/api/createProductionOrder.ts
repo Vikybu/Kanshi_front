@@ -1,6 +1,6 @@
 export default async function createProductionOrder(productionOrder: object){
 
-    const response = await fetch ("http://localhost:8000/api/productionOrder/create", {
+    const response = await fetch ("http://localhost:8000/api/admin/productionOrder/create", {
         method: "POST",
         headers: {'Content-type': 'application/json'},
         body: JSON.stringify(productionOrder)

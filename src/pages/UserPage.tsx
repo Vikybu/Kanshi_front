@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate} from "react-router-dom";
 import { useProductionStore } from "../stores/useProductionStore";
+import { useUserStore } from "../stores/userStore";
 import ProductionOrderCard from "../molecules/ProductionOrderCard";
-import getProductionOrder from "../api/getProductionOrder";
+import getProductionOrderPlannified from "../api/getProductionOrderPlannified";
 import sendDate from "../api/sendDate";
 import Header from "../components/Header";
 import MenuUser from "../components/MenuUser";
@@ -34,37 +35,39 @@ interface ProductionOrder {
 export default function UserPage(){
     const [productionOrders, setProductionOrders] = useState<ProductionOrder[]>([])
     const navigate = useNavigate();
+      const { user } = useUserStore();
     
     useEffect(() => {
         const fetchData = async () => {
-            const data = await getProductionOrder()
+            const data = await getProductionOrderPlannified()
             setProductionOrders(data)
         }
         fetchData()
     }, [])
 
     async function getDateAndHour(id: number) {
+    if (!user) return;
     const status = "inProduction";
+    const real_start_time = new Date().toISOString();
 
-    const now = new Date();
-    const formattedNow = now.getFullYear() + '-' +
-                         String(now.getMonth() + 1).padStart(2, '0') + '-' +
-                         String(now.getDate()).padStart(2, '0') + ' ' +
-                         String(now.getHours()).padStart(2, '0') + ':' +
-                         String(now.getMinutes()).padStart(2, '0') + ':' +
-                         String(now.getSeconds()).padStart(2, '0');
-
-    await sendDate(formattedNow, id, status);
+    await sendDate(real_start_time, id, status, user.id);
 }
 
     async function goToTheProduction(id: number){
-        await getDateAndHour(id);
-        useProductionStore.getState().setActiveProduction(id.toString());
-        navigate(`/user/production/${id}`);
+        const activeProductionId = useProductionStore.getState().activeProductionId;
+
+        if (activeProductionId) {
+            alert("Vous avez déjà un OF actif !");
+            return; 
+        }
+
+    await getDateAndHour(id);
+    useProductionStore.getState().setActiveProduction(id.toString());
+    navigate(`/user/production/${id}`);
     }
 
       return (
-        <div className="flex flex-col justify-center py-10">
+        <div className="flex flex-col justify-center">
             <Header />
             <MenuUser />
             <div className="w-full max-w-6xl flex flex-row gap-4">
