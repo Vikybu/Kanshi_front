@@ -1,8 +1,8 @@
 export default async function createNewDowntimeMachine(payload: {
   machine_id: number;
   downtime_reason_id: number;
-  started_at: string;
-  ended_at: string;
+  start_time_downtime: string;
+  end_time_downtime: string;
 }) {
 
   const response = await fetch( "http://localhost:8000/api/user/downtime-reason-machine/create",{

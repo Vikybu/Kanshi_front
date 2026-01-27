@@ -4,7 +4,6 @@ import getDowntimeReason from "../api/getDowntimeReason";
 import createNewDowntimeMachine from "../api/createNewDowntimeMachine";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-/* ===== Interfaces ===== */
 
 interface DowntimeReason {
   id: number;
@@ -28,7 +27,6 @@ interface CreateDowntimePayload {
   end_time_downtime: string;
 }
 
-/* ===== Component ===== */
 
 export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProps) {
   const [selectedType, setSelectedType] = useState<"planned" | "unplanned" | null>(null);
@@ -38,8 +36,6 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
 
   const [startDateTime, setStartDateTime] = useState("");
   const [endDateTime, setEndDateTime] = useState("");
-
-  /* ===== Fetch downtime reasons ===== */
 
   useEffect(() => {
     if (!selectedType) return;
@@ -60,7 +56,6 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
     setSelectedReason(null);
   }, [selectedType]);
 
-  /* ===== Create downtime ===== */
 
   async function createNewDowntime() {
     if (!selectedReason || !startDateTime || !endDateTime) return;
@@ -80,7 +75,6 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
     try {
       await createNewDowntimeMachine(payload);
 
-      // Reset après succès
       setSelectedReason(null);
       setStartDateTime("");
       setEndDateTime("");
@@ -94,12 +88,10 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
     }
   }
 
-  /* ===== Render ===== */
 
   return (
     <div className="flex gap-6 w-full">
 
-      {/* CARD GAUCHE */}
       <Card className="w-80">
         <CardHeader className="items-center font-text">
           <CardTitle>Déclaration d'un arrêt</CardTitle>
@@ -114,7 +106,6 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
         </CardContent>
       </Card>
 
-      {/* CARD MILIEU */}
       {selectedType && (
         <Card className="w-96">
           <CardHeader>
@@ -153,7 +144,6 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
         </Card>
       )}
 
-      {/* CARD DROITE */}
       {selectedReason && (
         <Card className="flex-1">
           <CardHeader>
