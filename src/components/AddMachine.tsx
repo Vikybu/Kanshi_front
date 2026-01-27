@@ -35,7 +35,7 @@ export default function AddMachine(){
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center bg-primary pt-6">
+        <div className="min-h-screen w-full flex flex-col items-center bg-primary pt-6">
             <MachineForm
                 machine_name={machine_name}
                 short_name={short_name}
