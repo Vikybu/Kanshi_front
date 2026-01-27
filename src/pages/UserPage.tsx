@@ -70,7 +70,7 @@ export default function UserPage(){
         <div className="flex flex-col justify-center">
             <Header />
             <MenuUser />
-            <div className="w-full max-w-6xl flex flex-row gap-4">
+            <div className="w-full max-w-6xl flex flex-row gap-4 m-2">
                 {productionOrders.map((productionOrder) => (
                     <ProductionOrderCard
                         key={productionOrder.id}
@@ -85,6 +85,7 @@ export default function UserPage(){
                         measurement_unit={productionOrder.raw_materials?.[0]?.measurement_unit ?? "—"}
                         status={productionOrder.status}
                         onButtonClick={() => goToTheProduction(productionOrder.id)}
+                        gap="1"
                     />
                 ))}
             </div>

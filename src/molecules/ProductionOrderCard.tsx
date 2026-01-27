@@ -14,6 +14,9 @@ interface ProductionOrderProps {
 
     showButton?: boolean;
     onButtonClick?: () => void;
+
+    direction?: "row" | "col";
+    gap?: string;
 }
 
 
@@ -26,18 +29,25 @@ export default function ProductionOrderCard({measurement_unit,
     status, 
     name, 
     showButton = true,
-    onButtonClick,}: ProductionOrderProps){ 
+    onButtonClick,
+    direction = "col",
+    gap = "gap-5",}: ProductionOrderProps){ 
 
     return(
-        <div className="bg-secondary rounded-xl shadow-md p-6 text-gray-800 gap-5">
-            <p>{production_order_reference}</p>
-            <p>{machine_name}</p>
-            <p>{status}</p>
-            <p>{name}</p>
-            <p>{theoritical_raw_material_quantity}{measurement_unit}</p>
-            <p>{start_time}</p>
-            <p>{end_time}</p>
-            <p>{theoritical_final_product_quantity} barquettes</p>
+        <div className={`
+        bg-secondary rounded-xl shadow-md p-2 text-gray-800
+        flex ${gap}
+        ${direction === "row" ? "flex-row items-center" : "flex-col"}
+      `}
+      >
+            <p className="font-text">{production_order_reference}</p>
+            <p className="font-text">{machine_name}</p>
+            <p className="font-text">{status}</p>
+            <p className="font-text">{name}</p>
+            <p className="font-text">{theoritical_raw_material_quantity}{measurement_unit}</p>
+            <p className="font-text">{start_time}</p>
+            <p className="font-text">{end_time}</p>
+            <p className="font-text">{theoritical_final_product_quantity} barquettes</p>
         <Button 
         showButton={showButton}  
         onClick={onButtonClick}

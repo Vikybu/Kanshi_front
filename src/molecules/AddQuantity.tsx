@@ -44,22 +44,22 @@ export default function AddQuantity({ productionOrderId, onQuantityUpdated }: Ad
         identification="quantity"
         value={quantityToAdd}
         onChange={(value) => setQuantityToAdd(Number(value))}
-        className="text-center w-28"
+        className="w-28"
       />
-      <Button onClick={clear} className="flex-shrink-0">Clear</Button>
+      <Button onClick={clear} className="flex-shrink-0 bg-redColor">Clear</Button>
     </div>
 
     <div className="grid grid-cols-3 gap-2">
-      <Button className="bg-tertiaire" onClick={() => addQuick(5)}>+5</Button>
-      <Button className="bg-tertiaire" onClick={() => addQuick(10)}>+10</Button>
-      <Button className="bg-tertiaire" onClick={() => addQuick(100)}>+100</Button>
+      <Button className="bg-tertiaire px-4 py-2 flex items-center justify-center" onClick={() => addQuick(5)}>+5</Button>
+      <Button className="bg-tertiaire px-4 py-2 flex items-center justify-center" onClick={() => addQuick(10)}>+10</Button>
+      <Button className="bg-tertiaire px-4 py-2 flex items-center justify-center" onClick={() => addQuick(100)}>+100</Button>
     </div>
 
     <div className="flex flex-col gap-2">
       <Button onClick={() => setIsOpen(true)} variant="outline">
         Clavier numérique
       </Button>
-      <Button onClick={validateQuantity}>Valider</Button>
+      <Button className="bg-greenColor" onClick={validateQuantity}>Valider</Button>
     </div>
 
       {isOpen && (
@@ -77,7 +77,7 @@ export default function AddQuantity({ productionOrderId, onQuantityUpdated }: Ad
                   value={quantityToAdd}
                   onChange={(value) => setQuantityToAdd(Number(value))}
                 />
-                <Button className="w-full" onClick={clear}>
+                <Button className="w-full bg-redColor" onClick={clear}>
                   Clear
                 </Button>
               </div>
@@ -103,7 +103,7 @@ export default function AddQuantity({ productionOrderId, onQuantityUpdated }: Ad
                 <Button className="flex-1 bg-red-500 hover:bg-red-600" onClick={() => setIsOpen(false)}>
                   Fermer
                 </Button>
-                <Button className="flex-1" onClick={validateQuantity}>
+                <Button className="flex-1 bg-greenColor" onClick={validateQuantity}>
                   Valider
                 </Button>
               </div>
