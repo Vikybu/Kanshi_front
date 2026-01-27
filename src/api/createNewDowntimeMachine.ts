@@ -1,7 +1,11 @@
-export default async function createProductionOrder(payload: any) {
-  console.log("Payload FINAL envoyé à l'API :", payload);
+export default async function createNewDowntimeMachine(payload: {
+  machine_id: number;
+  downtime_reason_id: number;
+  started_at: string;
+  ended_at: string;
+}) {
 
-  const response = await fetch( "http://localhost:8000/api/user/downtime-reason/create",{
+  const response = await fetch( "http://localhost:8000/api/user/downtime-reason-machine/create",{
       method: "POST",
       headers: {
         "Content-Type": "application/json",

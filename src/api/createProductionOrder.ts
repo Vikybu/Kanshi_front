@@ -1,20 +1,14 @@
-export default async function createNewDowntime(payload: {
-  machine_id: number;
-  downtime_reason_id: number;
-  started_at: string;
-  ended_at: string;
-}) {
-  const response = await fetch("/api/machine-downtimes", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+export default async function createProductionOrder(productionOrder: object){
 
-  if (!response.ok) {
-    throw new Error("Erreur lors de la création de l'arrêt");
-  }
+    const response = await fetch ("http://localhost:8000/api/productionOrder/create", {
+        method: "POST",
+        headers: {'Content-type': 'application/json'},
+        body: JSON.stringify(productionOrder)
+    })
+    if (!response.ok){
+        throw new Error("Erreur lors de l'appel API");
+    }
 
-  return response.json();
+    const userData = await response.json()
+    return userData.user
 }
