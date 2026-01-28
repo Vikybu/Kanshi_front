@@ -20,6 +20,7 @@ interface ProductionOrder {
   production_order_reference: string;
   theoritical_final_product_quantity: number;
   actual_final_product_quantity: number;
+  quantity_in_production: number; 
 }
 
 interface RadialChartProps {
@@ -34,7 +35,7 @@ export default function RadialChart({ onQuantityChange }: RadialChartProps) {
     if (!id) return;
     const data = await getOneProductionOrder(Number(id));
     setProductionOrder(data);
-    onQuantityChange(data.actual_final_product_quantity);
+    onQuantityChange(data.quantity_in_production);
   };
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function RadialChart({ onQuantityChange }: RadialChartProps) {
 
   if (!productionOrder) return <div>Chargement…</div>;
 
-  const produced = productionOrder.actual_final_product_quantity;
+  const produced = productionOrder.quantity_in_production;
   const total = productionOrder.theoritical_final_product_quantity;
   const percentage = Math.round((produced / total) * 100);
 
