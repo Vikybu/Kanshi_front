@@ -73,7 +73,7 @@ export default function ProductionOrderForm() {
   const [machines, setMachines] = useState<Machine[]>([]);
   const [finalProducts, setFinalProducts] = useState<FinalProduct[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [conflictStatus, setConflictStatus] = useState<"loading" | "ok" | "conflict" | null>(null);
+  const [conflictStatus, setConflictStatus] = useState<"loading" | "ok" | "conflict" | null>(null); //ICI
   const [modifiableReference, setModifiableReference] = useState("");
 
   const convertToDatetimeLocal = (dateString: string) => {
@@ -149,7 +149,7 @@ export default function ProductionOrderForm() {
         return;
       }
 
-      setConflictStatus("loading"); // En cours de vérification
+      setConflictStatus("loading");
 
       const data = await checkConflits(
         form.machine_id,
