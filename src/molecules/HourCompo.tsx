@@ -45,7 +45,7 @@ export default function HourCompo({ onTimeChange }: HourCompoProps) {
 
   return (
     <div className="flex flex-row justify-between items-center bg-primary">
-      <p className="font-text text-secondary text-md w-[100px]">
+      <p className="font-text text-secondary text-md w-[100px] ml-2">
         {hours?.production_order_reference ?? "—"}
       </p>
 
@@ -68,7 +68,7 @@ export default function HourCompo({ onTimeChange }: HourCompoProps) {
         </div>
       </div>
 
-      <p className="font-text text-secondary text-md">
+      <p className="font-text text-secondary text-md mr-2">
         {time.toLocaleTimeString()}
       </p>
     </div>
