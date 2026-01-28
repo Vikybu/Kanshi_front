@@ -39,21 +39,21 @@ export default function EndProductionCompo({ productionId }: EndProductionCompoP
       <CardContent className="flex flex-col justify-center gap-5">
         <button
         onClick={stopProduction}
-        className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md font-medium"
+        className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md font-family-small-title text-base"
       >
-        Arrêter la production
+        Arrêt production
       </button>
 
       <button
         onClick={goHome}
-        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md font-medium"
+        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md font-family-small-title text-base"
       >
         Accueil
       </button>
 
       <button
         onClick={logout}
-        className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md font-medium"
+        className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md font-family-small-title text-base"
       >
         Logout
       </button>

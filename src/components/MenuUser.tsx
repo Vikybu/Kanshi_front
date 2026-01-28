@@ -23,8 +23,8 @@ const MenuUser = () => {
   };
 
   return (
-    <nav className="flex flex-row justify-items-center rounded bg-primary">
-      <ul className="flex flex-row gap-5 p-3 m-3">
+    <nav className="rounded bg-primary">
+      <ul className="flex flex-row justify-around gap-5 p-3 m-3">
         <li className="text-secondary font-text text-xl">
           <Link to="/user">Accueil</Link>
         </li>

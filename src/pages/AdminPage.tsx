@@ -1,14 +1,19 @@
+import DisplayAdmin from "@/components/DisplayAdmin";
 import Header from "../components/Header";
 import Menu from '../components/MenuAdmin';
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
-export default function adminPage(){
-    return (
-        <>
-        < Header />
-        < Menu />
-        <Outlet />
-        </>
-        
-    )
+export default function AdminPageLayout() {
+  const location = useLocation();
+
+  const isMainPage = location.pathname === "/admin";
+
+  return (
+    <>
+      <Header />
+      <Menu />
+      <Outlet />
+      {isMainPage && <DisplayAdmin />}
+    </>
+  );
 }
