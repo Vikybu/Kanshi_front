@@ -33,6 +33,17 @@ export default function ProductionOrderCard({measurement_unit,
     direction = "col",
     gap = "gap-5",}: ProductionOrderProps){ 
 
+    function translateStatus(status: string){
+        if(status === "plannified") {
+            status = "plannifié"
+        } else if (status === "inProduction") {
+            status = "En production"
+        } else if (status === "finished"){
+            status = "Fin de production"
+        }
+        return status
+    }
+
     return(
         <div className={`
         bg-secondary rounded-xl shadow-md p-2 text-gray-800
@@ -42,7 +53,7 @@ export default function ProductionOrderCard({measurement_unit,
       >
             <p className="font-text">{production_order_reference}</p>
             <p className="font-text">{machine_name}</p>
-            <p className="font-text">{status}</p>
+            <p className="font-text">{translateStatus(status)}</p>
             <p className="font-text">{name}</p>
             <p className="font-text">{theoritical_raw_material_quantity}{measurement_unit}</p>
             <p className="font-text">{start_time}</p>

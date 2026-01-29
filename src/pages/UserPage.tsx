@@ -70,7 +70,7 @@ export default function UserPage(){
         <div className="flex flex-col justify-center">
             <Header />
             <MenuUser />
-            <div className="w-full max-w-6xl flex flex-row gap-4 m-2">
+            <div className="grid grid-cols-5 gap-5 m-1">
                 {productionOrders.map((productionOrder) => (
                     <ProductionOrderCard
                         key={productionOrder.id}
