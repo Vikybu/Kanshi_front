@@ -139,9 +139,9 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
       {/* Choix type arrêt */}
       <Card className="w-80">
         <CardHeader className="items-center font-bold">
-          <CardTitle>Déclaration d'un arrêt</CardTitle>
+          <CardTitle className="items-center font-text font-bold text-base">Déclaration d'un arrêt</CardTitle>
         </CardHeader>
-        <CardContent className="flex justify-center gap-3">
+        <CardContent className="flex justify-center gap-3 ">
           <Button onClick={() => setSelectedType("planned")}>Planifié</Button>
           <Button onClick={() => setSelectedType("unplanned")}>Non planifié</Button>
         </CardContent>
@@ -151,7 +151,7 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
       {selectedType && !currentDowntimeId && (
         <Card className="w-96">
           <CardHeader>
-            <CardTitle>
+            <CardTitle className="text-center font-text font-bold text-base">
               {selectedType === "planned" ? "planifiés" : "non planifiés"}
             </CardTitle>
           </CardHeader>
@@ -162,9 +162,11 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
                 <div
                   key={reason.id}
                   onClick={() => setSelectedReason(reason)}
-                  className={`flex-1 min-w-[120px] p-2 rounded cursor-pointer text-center ${
+                  className={`flex flex-1 min-w-30 p-2 rounded cursor-pointer 
+                              items-center justify-center text-center 
+                              font-family-small-title text-sm ${
                     selectedReason?.id === reason.id
-                      ? "bg-blue-500 text-white"
+                      ? "bg-primary text-white"
                       : "bg-muted hover:bg-muted/70"
                   }`}
                 >
@@ -172,7 +174,7 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
                 </div>
               ))}
             {!loading && downtimeReasons.length === 0 && (
-              <p className="w-full text-sm text-muted-foreground">Aucune raison trouvée</p>
+              <p className="w-full text-sm text-muted-foreground font-family-small-title">Aucune raison trouvée</p>
             )}
           </CardContent>
         </Card>
@@ -182,11 +184,11 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
       {selectedReason && !currentDowntimeId && (
         <Card className="flex-1">
           <CardHeader>
-            <CardTitle>Saisir les horaires de l'arrêt</CardTitle>
+            <CardTitle className="text-center font-text font-bold text-base">Saisir les horaires de l'arrêt</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <label className="font-medium">Début</label>
+              <label className="font-family-small-title">Début</label>
               <input
                 type="datetime-local"
                 value={startDateTime}
@@ -196,7 +198,7 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="font-medium">Fin (optionnel si arrêt en cours)</label>
+              <label className="font-family-small-title">Fin (optionnel si arrêt en cours)</label>
               <input
                 type="datetime-local"
                 value={endDateTime}
@@ -224,7 +226,7 @@ export default function DowntimeReasonCompo({ machine }: DowntimeReasonCompoProp
             <CardTitle className="text-red-600 flex justify-between items-center">
               Arrêt en cours
               {currentDowntimeReason && (
-                <span className="text-sm text-red-400 font-medium">
+                <span className="text-sm text-red-400 font-family-small-title">
                   Cause : {currentDowntimeReason.name}
                 </span>
               )}

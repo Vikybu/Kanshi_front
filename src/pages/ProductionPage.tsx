@@ -84,24 +84,24 @@ export default function ProductionPage() {
   if (!productionOrder) return <p>Chargement…</p>;
 
   return (
-    <div className="flex flex-col gap-3 min-h-screen bg-secondary">
+    <div className="flex flex-col min-h-screen bg-secondary">
       <HourCompo onTimeChange={setTimeData} />
 
-      <div className="flex flex-row gap-4 flex-wrap px-1">
-        <div className="flex-1 min-w-[200px]">
+      <div className="flex flex-row justify-around mt-1">
+        <div className="">
           <RadialChart onQuantityChange={setQuantity} />
         </div>
 
-        <div className="flex-1 min-w-[200px]">
+        <div className="">
           <TrsGauge trs={trs} />
         </div>
 
-        <div className="flex-[0.5] min-w-[120px] flex justify-center items-start">
+        <div className="">
           <EndProductionCompo productionId={productionOrder.id} />
         </div>
       </div>
 
-      <div className="px-1">
+      <div className="px-1 mt-1">
         <DowntimeReasonCompo machine={productionOrder.machines[0]!} />
       </div>
     </div>

@@ -1,14 +1,14 @@
 import { useState } from "react";
 import updateQuantityProduction from "../api/updateQuantityProduction";
-import stopProduction from "../api/stopProduction"; // Nouvelle API
+import stopProduction from "../api/stopProduction";
 import Button from "@/atoms/Button";
 import Input from "../atoms/Input";
 
 interface AddQuantityProps {
   productionOrderId: number;
   onQuantityUpdated?: () => void;
-  mode?: "add" | "stop"; // Nouveau: pour différencier ajout vs arrêt
-  currentQuantity?: number; // Pour pré-remplir lors de l'arrêt
+  mode?: "add" | "stop";
+  currentQuantity?: number;
 }
 
 export default function AddQuantity({ 
@@ -20,7 +20,7 @@ export default function AddQuantity({
   const [isOpen, setIsOpen] = useState(false);
   const [quantityToAdd, setQuantityToAdd] = useState<number>(mode === "stop" ? currentQuantity : 0);
 
-  // Clavier numérique : ajoute un chiffre à la fin
+  // Clavier numérique
   const writeQuantity = (digit: number) => {
     setQuantityToAdd(prev => {
       const prevStr = prev.toString();
@@ -74,10 +74,10 @@ export default function AddQuantity({
           onChange={(value) => setQuantityToAdd(Number(value))}
           className="w-28"
         />
-        <Button onClick={clear} className="flex-shrink-0 bg-redColor">Clear</Button>
+        <Button onClick={clear} className="shrink-0 bg-redColor">Clear</Button>
       </div>
 
-      {/* Boutons rapides (uniquement en mode ajout) */}
+      {/* Boutons rapides */}
       {mode === "add" && (
         <div className="grid grid-cols-3 gap-2">
           <Button onClick={() => addQuick(5)} className="bg-tertiaire px-4 py-2">+5</Button>
