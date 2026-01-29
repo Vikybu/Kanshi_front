@@ -197,7 +197,7 @@ export default function ProductionOrderForm() {
     <>
       <form
         onSubmit={handleSubmit}
-        className="bg-secondary rounded-xl p-6 w-[900px] mx-auto flex flex-col space-y-4 justify-center"
+        className="bg-secondary rounded-xl p-6 w-225 mx-auto flex flex-col space-y-4 justify-center"
       >
         <h1 className="size-smalltitle font-small-title text-center text-text underline decoration-primary decoration-2 underline-offset-6">
           Création d'un nouvel ordre de fabrication

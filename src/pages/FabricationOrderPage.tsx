@@ -41,7 +41,7 @@ export default function FabricationOrderPage() {
   const lastOF = productionOrders.length > 0 ? productionOrders[productionOrders.length - 1] : null;
 
   return (
-    <div className="bg-primary rounded shadow-md flex flex-col items-center justify-between gap-2 pt-4 mt-3">
+    <div className="bg-primary rounded shadow-md flex flex-col items-center justify-between gap-2 pt-2 mt-2">
       <div className="flex flex-col justify-center items-center gap-2">
         {lastOF && (
           <ProductionOrderCard

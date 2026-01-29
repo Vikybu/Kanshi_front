@@ -65,20 +65,22 @@ export default function RadialChart({ onQuantityChange }: RadialChartProps) {
   } satisfies ChartConfig;
 
   return (
-    <Card className="max-w-[600px] mx-auto">
+    <Card className="w-150 h-60">
       <CardHeader className="pb-2">
         <CardTitle className="font-text text-center text-base font-bold">Avancement production</CardTitle>
       </CardHeader>
 
       <CardContent className="flex items-center gap-3">
         <div className="flex-1">
-          <ChartContainer config={chartConfig} className="aspect-square max-h-[180px]">
+          <ChartContainer config={chartConfig} className="aspect-square max-h-45">
             <RadialBarChart
               data={chartData}
               startAngle={180}
               endAngle={180 - percentage * 3.6}
               innerRadius={60}
               outerRadius={85}
+              cx="65%"
+              cy="55%"
             >
               <PolarGrid gridType="circle" radialLines={false} stroke="none" polarRadius={[66, 54]} />
 
@@ -108,7 +110,7 @@ export default function RadialChart({ onQuantityChange }: RadialChartProps) {
 
         <div className="w-px bg-border self-stretch" />
 
-        <div className="w-[220px]">
+        <div className="w-62.5">
           <AddQuantity productionOrderId={productionOrder.id} onQuantityUpdated={fetchProductionOrder} />
         </div>
       </CardContent>

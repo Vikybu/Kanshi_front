@@ -26,13 +26,13 @@ export function TrsGauge({ trs }: TrsGaugeProps) {
   const needleAngle = -90 + trs * 1.8;
 
   return (
-    <Card>
+    <Card className="w-112.5 h-60">
       <CardHeader className="items-center font-text">
         <CardTitle className="items-center font-text font-bold text-base">Suivi du TRS</CardTitle>
       </CardHeader>
 
       <CardContent className="flex justify-center">
-        <svg viewBox="0 0 200 130" className="w-64">
+        <svg viewBox="0 0 190 210 150" className="w-50">
           <path
             d="M10 100 A90 90 0 0 1 190 100"
             fill="none"

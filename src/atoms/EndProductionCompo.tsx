@@ -34,7 +34,7 @@ export default function EndProductionCompo({ productionId }: EndProductionCompoP
   const goHome = () => navigate("/user/");
 
   return (
-    <Card className="py-1">
+    <Card className="w-50 h-60">
       <CardHeader className="items-center font-text font-bold text-base">Actions Production</CardHeader>
       <CardContent className="flex flex-col justify-center gap-5">
         <button
