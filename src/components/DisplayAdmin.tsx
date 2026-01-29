@@ -48,22 +48,22 @@ export default function DisplayAdmin() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Vue globale production</h1>
+      <h1 className="text-2xl font-bold mb-4 font-family-small-title">Vue globale production</h1>
 
       {loading ? (
-        <p>Chargement des machines...</p>
+        <p className="font-family-small-title">Chargement des machines...</p>
       ) : (
         <div className="flex flex-wrap gap-4">
           {machines.map((machine) => (
             <Card key={machine.id} className="w-80">
               <CardHeader>
-                <CardTitle>{machine.machine_name}</CardTitle>
+                <CardTitle className="font-family-small-title">{machine.machine_name}</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
-                <p>
+                <p className="font-family-small-title">
                   <strong>Statut : </strong>
                   <span
-                    className={`font-bold ${
+                    className={`font-bold font-family-small-title ${
                       machine.status === "inProduction"
                         ? "text-green-600"
                         : machine.status === "stopped"
@@ -83,7 +83,7 @@ export default function DisplayAdmin() {
                 )}
 
                 {machine.current_qty !== undefined && machine.qty_to_produce !== undefined && (
-                  <p>
+                  <p className="font-family-small-title">
                     <strong>Quantité : </strong>
                     {machine.current_qty} / {machine.qty_to_produce}
                   </p>
