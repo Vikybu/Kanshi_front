@@ -55,7 +55,7 @@ export default function EndProductionCompo({ productionId }: EndProductionCompoP
         onClick={logout}
         className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md font-family-small-title text-base"
       >
-        Logout
+        Déconnexion
       </button>
       </CardContent>
 
